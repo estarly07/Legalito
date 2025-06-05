@@ -52,8 +52,7 @@ class SurveyFormBloc extends Bloc<SurveyFormEvent, SurveyFormState> {
       pdf.addPage(pw.Page(build: (pw.Context context) {
         return pw.Text(documentContent);
       }));
-      final downloadsDirectory = await getDownloadsDirectory();
-      final legalitoFolder = Directory('${downloadsDirectory!.path}/legalito');
+      final legalitoFolder = Directory(event.savePath);
       await legalitoFolder.create(recursive: true);
       final file = File('${legalitoFolder.path}/${event.documentName}.pdf');
       await file.writeAsBytes(await pdf.save());

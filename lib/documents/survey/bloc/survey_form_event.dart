@@ -9,6 +9,7 @@ class LoadSurveyForm extends SurveyFormEvent {
 class GenerateSurveyDocument extends SurveyFormEvent {
   final String documentName;
   final Map<String, dynamic> answers;
+  final String savePath;
 
-  GenerateSurveyDocument(this.documentName, this.answers);
+  GenerateSurveyDocument(this.documentName, this.answers, {required this.savePath});
 }
