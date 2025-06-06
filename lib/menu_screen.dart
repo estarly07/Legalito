@@ -27,9 +27,9 @@ class MenuScreen extends StatelessWidget {
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
-                // TODO: Navigate to Simulador de conflictos screen
+                Navigator.pushNamed(context, "/simple_questions");
               },
-              child: Text('Simulador de conflictos'),
+              child: Text('Preguntas rapidas'),
             ),
           ],
         ),
