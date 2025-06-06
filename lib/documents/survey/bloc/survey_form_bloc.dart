@@ -1,3 +1,4 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -22,8 +23,11 @@ class SurveyFormBloc extends Bloc<SurveyFormEvent, SurveyFormState> {
   ) async {
     emit(SurveyFormLoading());
     try {
-      final formJson = await _surveyGeminiService.fetchFormStructure(event.documentName);
-      final formFields = formJson.map((json) => FormFieldModel.fromJson(json)).toList();
+      final formJson = await _surveyGeminiService.fetchFormStructure(
+        event.documentName,
+      );
+      final formFields =
+          formJson.map((json) => FormFieldModel.fromJson(json)).toList();
       emit(SurveyFormLoaded(formFields));
     } catch (e) {
       emit(SurveyFormError(e.toString()));
@@ -35,31 +39,25 @@ class SurveyFormBloc extends Bloc<SurveyFormEvent, SurveyFormState> {
     Emitter<SurveyFormState> emit,
   ) async {
     emit(SurveyFormLoading());
-    try {
-      final documentContent = await _surveyGeminiService.generateDocumentContent(
-        event.documentName,
-        event.answers,
-      );
 
-      // Request storage permission
-      var status = await Permission.storage.request(); // Already imported
-      if (!status.isGranted) {
-        emit(SurveyFormError("Storage permission not granted."));
-        return;
-      }
+    try {
+      final documentContent = await _surveyGeminiService
+          .generateDocumentContent(event.documentName, event.answers);
 
       final pdf = pw.Document();
-      pdf.addPage(pw.Page(build: (pw.Context context) {
-        return pw.Text(documentContent);
-      }));
-      final legalitoFolder = Directory(event.savePath);
-      await legalitoFolder.create(recursive: true);
-      final file = File('${legalitoFolder.path}/${event.documentName}.pdf');
+      pdf.addPage(
+        pw.Page(build: (pw.Context context) => pw.Text(documentContent)),
+      );
+
+      final directory = Directory(event.savePath);
+      await directory.create(recursive: true);
+
+      final file = File('${directory.path}/${event.documentName}.pdf');
       await file.writeAsBytes(await pdf.save());
+
       emit(SurveyFormGenerated(file.path));
     } catch (e) {
       emit(SurveyFormError(e.toString()));
     }
   }
 }
-

@@ -16,9 +16,12 @@ class DocumentsGeminiService {
   Future<List<String>> fetchRelatedDocuments(String query) async {
     try {
       final content = [
-        Content.text(
-          'A partir de la siguiente consulta: "$query", dame una lista de nombres de archivos o títulos de documentos legales relacionados de Colombia. Devuélveme únicamente los títulos, uno por línea, sin explicaciones ni detalles adicionales.',
-        ),
+        Content.text("""
+          A partir de la siguiente consulta del usuario: "$query", genera una lista de nombres de documentos legales cotidianos de Colombia, como contratos, acuerdos o formatos que una persona común podría necesitar.
+          No incluyas leyes, códigos, decretos, jurisprudencia ni normas oficiales.
+          Solo títulos de documentos prácticos, como contratos civiles, laborales, arrendamientos, poderes simples, autorizaciones, etc.
+          Devuélveme únicamente los títulos, uno por línea, sin explicaciones, sin descripciones y sin ningún texto adicional.
+          """),
       ];
 
       final response = await _model.generateContent(content);

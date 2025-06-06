@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:file_selector/file_selector.dart';
 import 'package:myapp/documents/survey/bloc/survey_form_bloc.dart';
 import 'package:myapp/documents/survey/bloc/survey_form_event.dart';
 import 'package:myapp/documents/survey/bloc/survey_form_state.dart';
@@ -31,6 +30,10 @@ class SurveyScreen extends StatelessWidget {
               return Center(child: CircularProgressIndicator());
             } else if (state is SurveyFormError) {
               return Center(child: Text('Error: ${state.error}'));
+            } else if (state is SurveyFormGenerated) {
+              return Center(
+                child: Text('Fue creado el archivo ${state.filePath}'),
+              );
             } else if (state is SurveyFormLoaded) {
               return _SurveyFormBuilder(formFields: state.fields);
             } else {
@@ -129,71 +132,56 @@ class _SurveyFormBuilderState extends State<_SurveyFormBuilder> {
   }
 
   void _saveForm(BuildContext context, String documentName) async {
-    final Map<String, dynamic> answers = {};
-    for (final field in widget.formFields) {
-      if (field.type == 'text') {
-        field.value = controllers[field.label]?.text ?? '';
-      }
-      final value = field.value ?? field.selectedValue ?? field.checked;
-      answers[field.label] = value;
-    }
+    try {
+      // Detectar plataforma
+      String? savePath;
 
-    if (Platform.isIOS) {
-      // iOS: guardar en sandbox sin pedir permisos
-      final dir = await getApplicationDocumentsDirectory();
-      final path = dir.path;
-      print('📱 iOS - Guardar en: $path');
+      if (Platform.isIOS) {
+        final directory = await getApplicationDocumentsDirectory();
+        savePath = directory.path;
+      } else if (Platform.isAndroid) {
+        final androidInfo = await DeviceInfoPlugin().androidInfo;
+        final sdkInt = androidInfo.version.sdkInt;
 
-      context.read<SurveyFormBloc>().add(
-        GenerateSurveyDocument(documentName, answers, savePath: path),
-      );
-    } else if (Platform.isAndroid) {
-      // Obtener la versión de Android
-      final deviceInfo = await DeviceInfoPlugin().androidInfo;
-      final sdkInt = deviceInfo.version.sdkInt ?? 0;
-
-      if (sdkInt >= 30) {
-        // Android 11+ (API 30): usar file_selector
-        const String suggestedName = 'documento_legalito.pdf';
-        final XFile? file = await getSaveLocation(
-          suggestedName: suggestedName,
-        ).then((path) => path != null ? XFile(path.path) : null);
-
-        if (file != null) {
-          print('📂 Android 11+ - Usuario seleccionó: ${file.path}');
-          context.read<SurveyFormBloc>().add(
-            GenerateSurveyDocument(documentName, answers, savePath: file.path),
-          );
+        if (sdkInt >= 30) {
+          final dir = await getExternalStorageDirectory();
+          savePath = '${dir?.path}';
         } else {
-          print('❌ Usuario canceló la selección de archivo.');
-        }
-      } else {
-        // Android < 11: solicitar permisos y guardar en carpeta pública
-        final status = await Permission.storage.status;
-        if (!status.isGranted) {
-          final result = await Permission.storage.request();
-          if (!result.isGranted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Permiso de almacenamiento denegado.')),
-            );
-            return;
+          var status = await Permission.storage.status;
+          if (!status.isGranted) {
+            status = await Permission.storage.request();
+            if (!status.isGranted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Permiso de almacenamiento denegado')),
+              );
+              return;
+            }
           }
+          savePath = '/storage/emulated/0/Download/Legalito';
         }
-
-        final directory = Directory('/storage/emulated/0/Download/Legalito');
-        if (!(await directory.exists())) {
-          await directory.create(recursive: true);
-        }
-        final path = '${directory.path}/documento_legalito.pdf';
-
-        print('📂 Android <11 - Guardar en: $path');
-
-        context.read<SurveyFormBloc>().add(
-          GenerateSurveyDocument(documentName, answers, savePath: path),
-        );
       }
-    } else {
-      print('🛑 Plataforma no soportada');
+
+      // Guardar valores desde los campos del formulario
+      for (final field in widget.formFields) {
+        if (field.type == 'text') {
+          field.value = controllers[field.label]?.text ?? '';
+        }
+      }
+
+      final Map<String, dynamic> answers = {};
+      for (final field in widget.formFields) {
+        final value = field.value ?? field.selectedValue ?? field.checked;
+        answers[field.label] = value;
+      }
+
+      // Enviar evento con path de guardado
+      context.read<SurveyFormBloc>().add(
+        GenerateSurveyDocument(documentName, answers, savePath: savePath!),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al guardar el formulario: $e')),
+      );
     }
   }
 

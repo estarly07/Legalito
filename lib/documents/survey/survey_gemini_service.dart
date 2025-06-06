@@ -14,8 +14,15 @@ class SurveyGeminiService {
     String documentName,
   ) async {
     try {
-      final prompt =
-          'Generate a JSON array of form fields required for a "$documentName". Each object in the array should have the keys "label" (String), "type" (String, e.g., "text", "number", "date", "boolean"), "required" (boolean), and "key" (String, a unique identifier). Provide at least 3 fields. Ensure the output is valid JSON.';
+      final prompt ="""
+      Genera un arreglo JSON que contenga los campos necesarios para un formulario titulado "$documentName".
+      Cada objeto dentro del arreglo debe incluir las siguientes claves:
+      "label": una cadena de texto con el nombre visible del campo.
+      "type": una cadena que indique el tipo de dato (por ejemplo: "text", "number", "date", "boolean").
+      "required": un valor booleano que indique si el campo es obligatorio.
+      "key": una cadena única que sirva como identificador del campo.
+      Asegúrate de incluir al menos 3 campos distintos y de que la salida sea un JSON válido.
+      """;
       final content = [Content.text(prompt)];
       final response = await _model.generateContent(content);
 
