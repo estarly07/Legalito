@@ -52,29 +52,74 @@ class _MenuScreenState extends State<MenuScreen> {
                 clipBehavior: Clip.none,
                 children: [
                   Container(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                       top: 16,
                       bottom: 16,
                       left: 16,
                       right: 150,
                     ),
                     decoration: BoxDecoration(
-                      color: Color(0xFFFFF3E0),
+                      color: const Color(0xFFFFF3E0),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: AnimatedSwitcher(
-                      duration: Duration(milliseconds: 500),
-                      child: Text(
-                        _phrases[_currentPhraseIndex],
-                        key: ValueKey(_phrases[_currentPhraseIndex]),
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
+                    child: Stack(
+                      children: [
+                        // Burbujas decorativas en el fondo
+                        Positioned.fill(
+                          child: CustomPaint(
+                            painter: BubbleBackgroundPainter(),
+                          ),
                         ),
-                      ),
+
+                        // Contenido del banner (frase animada)
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 500),
+                          transitionBuilder: (
+                            Widget child,
+                            Animation<double> animation,
+                          ) {
+                            final inAnimation = Tween<Offset>(
+                              begin: const Offset(
+                                1.0,
+                                0.0,
+                              ), // entra desde la derecha
+                              end: Offset.zero,
+                            ).animate(animation);
+
+                            final outAnimation = Tween<Offset>(
+                              begin: Offset.zero,
+                              end: const Offset(
+                                -1.0,
+                                0.0,
+                              ), // sale hacia la izquierda
+                            ).animate(animation);
+
+                            // Detectar si es el widget saliente o el entrante
+                            return SlideTransition(
+                              position:
+                                  child.key ==
+                                          ValueKey(
+                                            _phrases[_currentPhraseIndex],
+                                          )
+                                      ? inAnimation
+                                      : outAnimation,
+                              child: child,
+                            );
+                          },
+                          child: Text(
+                            _phrases[_currentPhraseIndex],
+                            key: ValueKey(_phrases[_currentPhraseIndex]),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+
                   Positioned(
                     right: 0,
                     top: -70,
@@ -234,27 +279,126 @@ class _Title extends StatelessWidget {
                   color: Colors.black87,
                 ),
               ),
-              AnimatedSwitcher(
-                duration: Duration(milliseconds: 600),
-                transitionBuilder:
-                    (child, animation) =>
-                        ScaleTransition(scale: animation, child: child),
-                child: Text(
-                  " 🚀 ",
-                  key: ValueKey(
-                    DateTime.now().second % 2 == 0,
-                  ), // Cambio forzado para reiniciar animación
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.orangeAccent,
-                  ),
-                ),
-              ),
+              const BouncingRocket(),
             ],
           ),
         ],
       ),
     );
   }
+}
+
+class BouncingRocket extends StatefulWidget {
+  const BouncingRocket({Key? key}) : super(key: key);
+
+  @override
+  State<BouncingRocket> createState() => _BouncingRocketState();
+}
+
+class _BouncingRocketState extends State<BouncingRocket>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _bounceAnimation;
+  late Animation<double> _rotationAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(seconds: 4), // rebote + giro en este tiempo
+      vsync: this,
+    )..repeat();
+
+    _bounceAnimation = TweenSequence([
+      TweenSequenceItem(
+        tween: Tween(
+          begin: 0.0,
+          end: -10.0,
+        ).chain(CurveTween(curve: Curves.easeOut)),
+        weight: 25,
+      ),
+      TweenSequenceItem(
+        tween: Tween(
+          begin: -10.0,
+          end: 0.0,
+        ).chain(CurveTween(curve: Curves.bounceOut)),
+        weight: 25,
+      ),
+      TweenSequenceItem(
+        tween: ConstantTween(0.0),
+        weight: 50,
+      ), // pausa antes del siguiente rebote
+    ]).animate(_controller);
+
+    _rotationAnimation = Tween<double>(begin: 0.0, end: 2 * 3.1416) // 360°
+    .animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Interval(0.0, 1.0, curve: Curves.easeInOut),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (_, child) {
+        return Transform.translate(
+          offset: Offset(0, _bounceAnimation.value),
+          child: Transform.rotate(
+            angle: _rotationAnimation.value,
+            child: child,
+          ),
+        );
+      },
+      child: const Text(
+        "🚀",
+        style: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.w800,
+          color: Colors.orangeAccent,
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+}
+
+class BubbleBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint =
+        Paint()
+          ..color = const Color.fromARGB(50, 245, 154, 8) // tono más claro
+          ..style = PaintingStyle.fill;
+
+    final bubbles = [
+      Offset(20, 20),
+      Offset(size.width * 0.25, 10),
+      Offset(size.width - 30, 20),
+      Offset(size.width * 0.75, 50),
+      Offset(10, size.height * 0.4),
+      Offset(size.width - 40, size.height * 0.35),
+      Offset(size.width * 0.5, size.height * 0.6),
+      Offset(30, size.height - 30),
+      Offset(size.width - 20, size.height - 40),
+      Offset(size.width * 0.5, size.height - 10),
+    ];
+
+    final radii = [12.0, 8.0, 10.0, 6.0, 14.0, 10.0, 8.0, 6.0, 12.0, 10.0];
+
+    for (int i = 0; i < bubbles.length; i++) {
+      canvas.drawCircle(bubbles[i], radii[i], paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
