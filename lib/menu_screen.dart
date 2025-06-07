@@ -136,12 +136,13 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.description_rounded,
-                        size: 32,
-                        color: Colors.black87,
+                      Image.asset(
+                        "assets/pdf.png",
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.fill,
                       ),
-                      SizedBox(width: 16),
+                      SizedBox(width: 6),
                       Expanded(
                         child: Text(
                           'Generar documentos legales',

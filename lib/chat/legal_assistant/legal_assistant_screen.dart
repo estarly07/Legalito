@@ -202,7 +202,7 @@ class _LegalAssistantScreenState extends State<LegalAssistantScreen> {
               ),
               boxShadow: [shadow],
             ),
-            child: _formatGeminiResponse(
+            child: formatGeminiResponse(
               message.text
                   .replaceFirst("Usuario:", "")
                   .replaceFirst("Legalito:", ""),
@@ -220,99 +220,7 @@ class _LegalAssistantScreenState extends State<LegalAssistantScreen> {
     );
   }
 
-  Widget _formatGeminiResponse(String rawText) {
-    final boldRegex = RegExp(r'\*\*(.*?)\*\*');
-    final bulletRegex = RegExp(r'^- (.*)', multiLine: true);
-    final titleRegex = RegExp(r'^## (.*)', multiLine: true);
-
-    final lines = rawText.trim().split('\n');
-    final spans = <TextSpan>[];
-
-    for (var line in lines) {
-      // Título
-      if (titleRegex.hasMatch(line)) {
-        final match = titleRegex.firstMatch(line);
-        spans.add(
-          TextSpan(
-            text: '${match?.group(1)?.trim()}\n',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: Colors.black87,
-            ),
-          ),
-        );
-        continue;
-      }
-
-      // Lista con viñeta
-      if (bulletRegex.hasMatch(line)) {
-        final match = bulletRegex.firstMatch(line);
-        spans.add(
-          TextSpan(
-            text: '• ${match?.group(1)?.trim()}\n',
-            style: const TextStyle(fontSize: 16, color: Colors.black87),
-          ),
-        );
-        continue;
-      }
-
-      // Negrita en línea
-      final parts = <TextSpan>[];
-      var currentIndex = 0;
-
-      for (final match in boldRegex.allMatches(line)) {
-        if (match.start > currentIndex) {
-          parts.add(
-            TextSpan(
-              text: line.substring(currentIndex, match.start),
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
-            ),
-          );
-        }
-
-        parts.add(
-          TextSpan(
-            text: match.group(1),
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-        );
-
-        currentIndex = match.end;
-      }
-
-      // Agregar el resto del texto si hay
-      if (currentIndex < line.length) {
-        parts.add(
-          TextSpan(
-            text: line.substring(currentIndex),
-            style: const TextStyle(fontSize: 16, color: Colors.black87),
-          ),
-        );
-      }
-
-      // Si no hay negritas, agregar línea normal
-      spans.addAll(
-        parts.isNotEmpty
-            ? [TextSpan(children: parts), const TextSpan(text: '\n')]
-            : [
-              TextSpan(
-                text: line + '\n',
-                style: const TextStyle(fontSize: 16, color: Colors.black87),
-              ),
-            ],
-      );
-    }
-
-    return SelectableText.rich(
-      TextSpan(children: spans),
-      textAlign: TextAlign.left,
-    );
-  }
+  
 
   Widget _buildLoadingBubble() {
     return Align(
@@ -430,3 +338,96 @@ class _AnimatedDotsState extends State<AnimatedDots>
     super.dispose();
   }
 }
+Widget formatGeminiResponse(String rawText) {
+    final boldRegex = RegExp(r'\*\*(.*?)\*\*');
+    final bulletRegex = RegExp(r'^- (.*)', multiLine: true);
+    final titleRegex = RegExp(r'^## (.*)', multiLine: true);
+
+    final lines = rawText.trim().split('\n');
+    final spans = <TextSpan>[];
+
+    for (var line in lines) {
+      // Título
+      if (titleRegex.hasMatch(line)) {
+        final match = titleRegex.firstMatch(line);
+        spans.add(
+          TextSpan(
+            text: '${match?.group(1)?.trim()}\n',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: Colors.black87,
+            ),
+          ),
+        );
+        continue;
+      }
+
+      // Lista con viñeta
+      if (bulletRegex.hasMatch(line)) {
+        final match = bulletRegex.firstMatch(line);
+        spans.add(
+          TextSpan(
+            text: '• ${match?.group(1)?.trim()}\n',
+            style: const TextStyle(fontSize: 16, color: Colors.black87),
+          ),
+        );
+        continue;
+      }
+
+      // Negrita en línea
+      final parts = <TextSpan>[];
+      var currentIndex = 0;
+
+      for (final match in boldRegex.allMatches(line)) {
+        if (match.start > currentIndex) {
+          parts.add(
+            TextSpan(
+              text: line.substring(currentIndex, match.start),
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
+            ),
+          );
+        }
+
+        parts.add(
+          TextSpan(
+            text: match.group(1),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+        );
+
+        currentIndex = match.end;
+      }
+
+      // Agregar el resto del texto si hay
+      if (currentIndex < line.length) {
+        parts.add(
+          TextSpan(
+            text: line.substring(currentIndex),
+            style: const TextStyle(fontSize: 16, color: Colors.black87),
+          ),
+        );
+      }
+
+      // Si no hay negritas, agregar línea normal
+      spans.addAll(
+        parts.isNotEmpty
+            ? [TextSpan(children: parts), const TextSpan(text: '\n')]
+            : [
+              TextSpan(
+                text: line + '\n',
+                style: const TextStyle(fontSize: 16, color: Colors.black87),
+              ),
+            ],
+      );
+    }
+
+    return SelectableText.rich(
+      TextSpan(children: spans),
+      textAlign: TextAlign.left,
+    );
+  }
