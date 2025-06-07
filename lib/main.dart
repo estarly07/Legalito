@@ -5,6 +5,8 @@ import 'package:myapp/database_helper.dart';
 import 'package:myapp/chat/legal_assistant/legal_assistant_bloc.dart';
 import 'package:myapp/documents/list/documents_screen.dart';
 import 'package:myapp/documents/survey/survey_screen.dart';
+import 'package:myapp/menu/bloc/menu_bloc.dart';
+import 'package:myapp/menu/bloc/menu_event.dart';
 import 'package:myapp/menu/menu_screen.dart';
 import 'package:myapp/simple_questions/bloc/simple_questions_bloc.dart';
 import 'package:myapp/simple_questions/simple_questions_gemini_service.dart';
@@ -32,7 +34,11 @@ class MyApp extends StatelessWidget {
       initialRoute: '/bienvenida',
       routes: {
         '/bienvenida': (context) => const WelcomeScreen(),
-        '/menu': (context) => MenuScreen(),
+        '/menu':
+            (context) => BlocProvider(
+              create: (context) => MenuBloc()..add(FetchLegalTipsEvent()),
+              child: MenuScreen(),
+            ),
         '/suvey_document': (context) => SurveyScreen(),
         '/asistente_legal':
             (context) => BlocProvider(

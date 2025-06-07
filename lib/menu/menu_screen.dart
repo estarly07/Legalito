@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myapp/menu/bloc/menu_bloc.dart';
+import 'package:myapp/menu/bloc/menu_state.dart';
 
 class MenuScreen extends StatefulWidget {
   @override
@@ -7,11 +10,8 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  final List<String> _phrases = [
-    "¿Firmaste sin leer? ¡Yo reviso por ti!",
-    "¡No más letras pequeñas! Legalito te las agranda.",
-    "¿Arriendo problemático? 🏠 Legalito al rescate.",
-    "¿Dudas legales? 📚 ¡Legalito responde!",
+  List<String> _phrases = [
+    "Evita prestar tu nombre para abrir cuentas bancarias",
   ];
 
   int _currentPhraseIndex = 0;
@@ -96,24 +96,31 @@ class _MenuScreenState extends State<MenuScreen> {
 
                             // Detectar si es el widget saliente o el entrante
                             return SlideTransition(
-                              position:
-                                  child.key ==
-                                          ValueKey(
-                                            _phrases[_currentPhraseIndex],
-                                          )
-                                      ? inAnimation
-                                      : outAnimation,
+                              position: inAnimation,
                               child: child,
                             );
                           },
-                          child: Text(
-                            _phrases[_currentPhraseIndex],
-                            key: ValueKey(_phrases[_currentPhraseIndex]),
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black87,
-                            ),
+                          child: BlocBuilder<MenuBloc, MenuState>(
+                            builder: (context, state) {
+                              String tip = _phrases[_currentPhraseIndex];
+                              if (state is MenuLoaded &&
+                                  state.legalTips.isNotEmpty) {
+                                _phrases = state.legalTips;
+                                tip =
+                                    state.legalTips[_currentPhraseIndex %
+                                        state.legalTips.length];
+                              }
+                              print(tip);
+                              return Text(
+                                tip,
+                                key: ValueKey(tip),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black87,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],

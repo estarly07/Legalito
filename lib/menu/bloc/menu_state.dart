@@ -7,6 +7,7 @@ sealed class MenuState {
 }
 
 class MenuInitial extends MenuState {}
+class MenuLoading extends MenuState {}
 
 class MenuLoaded extends MenuState {
   final List<String> legalTips;

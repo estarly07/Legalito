@@ -13,9 +13,11 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     Emitter<MenuState> emit,
   ) async {
     try {
+      emit(MenuLoading());
       final legalTips = await fetchLegalTips();
-      emit(MenuLoaded(legalTips : legalTips));
+      emit(MenuLoaded(legalTips: legalTips));
     } catch (e) {
+      emit(MenuLoaded(legalTips: []));
       // Handle error, potentially emit an error state
       print('Error fetching legal tips: $e');
     }
