@@ -136,9 +136,19 @@ class _DocumentsScreenState extends State<DocumentsScreen>
   }
 
   Widget _buildSearchBar(bool isLoading) {
-    return Material(
-      elevation: 2,
-      borderRadius: BorderRadius.circular(16),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08), // Color muy suave
+            blurRadius: 24, // Qué tan difusa es la sombra
+            spreadRadius: 2, // Qué tanto se extiende desde el widget
+            offset: const Offset(0, 8), // Dirección de la sombra (eje X, Y)
+          ),
+        ],
+      ),
       child: TextField(
         controller: _controller,
         onChanged: (text) => _debounce.add(text),
