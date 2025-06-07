@@ -56,7 +56,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       top: 16,
                       bottom: 16,
                       left: 16,
-                      right: 160,
+                      right: 150,
                     ),
                     decoration: BoxDecoration(
                       color: Color(0xFFFFF3E0),
@@ -76,13 +76,13 @@ class _MenuScreenState extends State<MenuScreen> {
                     ),
                   ),
                   Positioned(
-                    right: -10,
-                    top: -30,
+                    right: 0,
+                    top: -70,
                     child: Image.asset(
-                      'assets/legalito_front.png',
-                      width: 150,
-                      height: 120,
-                      fit: BoxFit.contain,
+                      'assets/legalito_banner.png',
+                      width: 130,
+                      height: 180,
+                      fit: BoxFit.fill,
                     ),
                   ),
                 ],
@@ -96,7 +96,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   Expanded(
                     child: _buildFlatCard(
                       title: 'Asistente Legal',
-                      icon: Icons.chat_bubble_outline,
+                      image: 'assets/legalito_chat.png',
                       color: Color(0xfffeeae1), // pastel naranja
                       onTap: () => Navigator.pushNamed(context, '/chats'),
                     ),
@@ -104,8 +104,8 @@ class _MenuScreenState extends State<MenuScreen> {
                   SizedBox(width: 16),
                   Expanded(
                     child: _buildFlatCard(
-                      title: 'Preguntas rápidas',
-                      icon: Icons.flash_on_rounded,
+                      title: 'Solucionar problemas',
+                      image: 'assets/legalito_thinking.png',
                       color: Color(0xFFe4fce4), // pastel verde
                       onTap:
                           () =>
@@ -170,7 +170,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
   Widget _buildFlatCard({
     required String title,
-    required IconData icon,
+    required String image,
     required Color color,
     required VoidCallback onTap,
   }) {
@@ -186,8 +186,7 @@ class _MenuScreenState extends State<MenuScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 36, color: Colors.black87),
-              SizedBox(height: 12),
+              Image.asset(image, width: 65, height: 90, fit: BoxFit.fill),
               Text(
                 title,
                 style: TextStyle(
