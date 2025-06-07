@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:math';
 import 'theme.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -13,27 +12,19 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _animation;
+  late Animation<double> _bounce;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 500),
       vsync: this,
+      duration: const Duration(milliseconds: 800),
     );
-    _animation = Tween<double>(begin: 0, end: 5).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.bounceOut),
-    )..addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        Future.delayed(const Duration(seconds: 3), () {
-          if (mounted) {
-            _controller.forward(from: 0);
-          }
-        });
-      }
-    });
-
+    _bounce = Tween<double>(
+      begin: 0,
+      end: -12,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
     _controller.forward();
   }
 
@@ -45,253 +36,179 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      backgroundColor: AppColors.backgroundWhite, // Set background to white
+      backgroundColor: AppColors.backgroundWhite,
       body: Stack(
         children: [
-          // Background Bubbles
+          // Fondo con burbujas suaves
           Positioned(
-            top: screenSize.height * 0.05, // Top of the screen
-            right: screenSize.width * 0.5, // Towards the right
-            child: Container(
-              width: 80, // Large size
-              height: 80,
-              decoration: BoxDecoration(
-                color: AppColors.mediumGray.withOpacity(0.3),
-                shape: BoxShape.circle,
-              ),
-            ),
+            top: -40,
+            left: -30,
+            child: _bubble(150, AppColors.primaryBlue.withOpacity(0.1)),
           ),
           Positioned(
-            top: screenSize.height * 0.25, // Slightly lower
-            right: screenSize.width * 0.35, // Further left
-            child: Container(
-              width: 40, // Small size
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.mediumGray.withOpacity(0.3),
-                shape: BoxShape.circle,
-              ),
-            ),
+            bottom: -50,
+            right: -40,
+            child: _bubble(180, AppColors.primaryBlue.withOpacity(0.08)),
           ),
-          Positioned(
-            top: screenSize.height * 0.35, // Lower
-            right: screenSize.width * 0.15, // Closer to the right edge
-            child: Container(
-              width: 100, // Large size
-              height: 100,
-              decoration: BoxDecoration(
-                color: AppColors.mediumGray.withOpacity(0.3),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            top: screenSize.height * 0.4, // Vertical center
-            left: screenSize.width * 0.4, // Horizontal center
-            child: Container(
-              width: 50, // Small size
-              height: 50,
-              decoration: BoxDecoration(
-                color: AppColors.mediumGray.withOpacity(0.3),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            top: -50, // Slightly lower
-            right: -50, // Slightly to the right
-            child: Container(
-              width: 120, // Large size
-              height: 120,
-              decoration: BoxDecoration(
-                color: AppColors.mediumGray.withOpacity(0.3),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: screenSize.height * 0.2, // Above the text/buttons
-            left: screenSize.width * 0.1, // Towards the left
-            child: Container(
-              width: 60, // Small size
-              height: 60,
-              decoration: BoxDecoration(
-                color: AppColors.mediumGray.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-
-          // Panda Image
-          Positioned(
-            top: 0, // Position at the top
-            right:
-                -(screenSize.width *
-                    0.5), // Position to the right to show half of the image
-            child: Transform.rotate(
-              // Rotate slightly to the left (in radians)
-              angle: -0.3,
-              child: Image.asset(
-                'assets/legalito_front.png', // Changed to 50% width
-                width: screenSize.width,
-                height: screenSize.height * 0.7,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-
-          // Text and Buttons Column
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize:
-                    MainAxisSize
-                        .min, // Make the column size based on its content
+          // Contenido principal
+          Stack(
+            children: [
+              Wrap(
                 children: [
-                  // Main Text
-                  RichText(
-                    text: TextSpan(
-                      style: GoogleFonts.inter(
-                        // Use Inter font
-                        fontSize: 24, // Large font size
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black, // Use textPrimary color
-                        height: 1.2,
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: size.height * 0.4,
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(
+                              0.08,
+                            ), // Color muy suave
+                            blurRadius: 24, // Qué tan difusa es la sombra
+                            spreadRadius:
+                                12, // Qué tanto se extiende desde el widget
+                            offset: const Offset(
+                              0,
+                              8,
+                            ), // Dirección de la sombra (eje X, Y)
+                          ),
+                        ],
                       ),
-                      children: [
-                        const TextSpan(text: 'Bienvenido a\n'),
-                        WidgetSpan(
-                          child: AnimatedBuilder(
-                            animation: _animation,
-                            builder: (context, child) {
-                              return Transform.translate(
-                                offset: Offset(0, -_animation.value),
-                                child: Text(
-                                  'Legalito!',
-                                  style: GoogleFonts.poppins(
-                                    // Use Poppins for highlighted text
-                                    fontSize:
-                                        38, // Larger font size for emphasis
-                                    fontWeight:
-                                        FontWeight.bold, // Extra bold weight
-                                    color:
-                                        AppColors
-                                            .primaryBlue, // Highlight with primary blue
-                                    shadows: [
-                                      Shadow(
-                                        color: Colors.black.withOpacity(0.3),
-                                        offset: const Offset(2, 2),
-                                        blurRadius: 3,
-                                      ),
-                                    ],
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Bienvenido a',
+                              style: GoogleFonts.inter(
+                                fontSize: 20,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              'Legalito',
+                              style: GoogleFonts.poppins(
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primaryBlue,
+                                shadows: [
+                                  Shadow(
+                                    blurRadius: 4,
+                                    offset: const Offset(2, 2),
+                                    color: Colors.black12,
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8.0), // Small space between texts
-                  Text(
-                    'No soy tu abogado ...pero te asesoro bonito',
-                    style: GoogleFonts.inter(
-                      fontSize: 16, // Smaller font size
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.mediumGray, // More subtle color
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ), // Add space between text and buttons
-                  // Buttons
-                  Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.stretch, // Make buttons full width
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(
-                            // Use pushReplacementNamed for welcome screen
-                            context,
-                            '/menu', // Navigate to main screen
-                          ); // Navigate to main screen
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 32, // Increase horizontal padding
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          elevation: 3,
-                        ),
-                        child: Text(
-                          '¡Vamos al Caso!',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16, // Adjusted font size
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'No soy tu abogado...\npero te asesoro bonito 😉',
+                              style: GoogleFonts.inter(
+                                fontSize: 18,
+                                color: AppColors.mediumGray,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            _mainButton(
+                              context,
+                              text: '¡Vamos al Caso!',
+                              onTap:
+                                  () => Navigator.pushReplacementNamed(
+                                    context,
+                                    '/menu',
+                                  ),
+                              filled: true,
+                            ),
+                            const SizedBox(height: 12),
+                            _mainButton(
+                              context,
+                              text: 'Unirme',
+                              onTap:
+                                  () => Navigator.pushReplacementNamed(
+                                    context,
+                                    '/auth',
+                                  ),
+                              filled: false,
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 16,
-                      ), // Add vertical space between buttons
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(
-                            context, // Use pushReplacementNamed
-                            '/auth', // Assuming '/auth' route exists for login/registration
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white, // White background
-                          foregroundColor:
-                              AppColors.primaryBlue, // Primary color for text
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          elevation: 3,
-                          side: BorderSide(
-                            // Primary color border
-                            color: AppColors.primaryBlue,
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Text(
-                          'Unirme',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16, // Adjusted font size
-                            color:
-                                AppColors
-                                    .primaryBlue, // Use primary blue for text
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 32.0), // Add padding at the bottom
                 ],
               ),
-            ),
+              Padding(
+                padding: EdgeInsets.only(top: size.height * 0.1),
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: AnimatedBuilder(
+                    animation: _bounce,
+                    builder: (_, child) {
+                      return Transform.translate(
+                        offset: Offset(0, _bounce.value),
+                        child: child,
+                      );
+                    },
+                    child: Image.asset(
+                      'assets/legalito_juez.png',
+                      height: size.height * 0.4,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _bubble(double size, Color color) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    );
+  }
+
+  Widget _mainButton(
+    BuildContext context, {
+    required String text,
+    required VoidCallback onTap,
+    required bool filled,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: onTap,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: filled ? AppColors.primaryBlue : Colors.white,
+          foregroundColor: filled ? Colors.white : AppColors.primaryBlue,
+          elevation: 4,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side:
+                filled
+                    ? BorderSide.none
+                    : BorderSide(color: Color(0xfffeeae1), width: 1.5),
+          ),
+        ),
+        child: Text(
+          text,
+          style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
       ),
     );
   }

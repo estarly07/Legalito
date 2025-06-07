@@ -126,7 +126,7 @@ class _LegalAssistantScreenState extends State<LegalAssistantScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                'assets/legalito_front.png',
+                                'assets/legalito_analizing.png',
                                 height: 120,
                               ),
                               const SizedBox(height: 24),
