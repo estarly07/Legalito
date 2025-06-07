@@ -13,7 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'simple_questions/simple_questions_screen.dart';
 import 'theme.dart';
 import 'menu_screen.dart';
-import 'legal_assistant_screen.dart';
+import 'chat/legal_assistant/legal_assistant_screen.dart';
 import 'simulator_screen.dart';
 
 void main() => runApp(const MyApp());
