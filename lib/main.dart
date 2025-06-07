@@ -5,6 +5,7 @@ import 'package:myapp/database_helper.dart';
 import 'package:myapp/chat/legal_assistant/legal_assistant_bloc.dart';
 import 'package:myapp/documents/list/documents_screen.dart';
 import 'package:myapp/documents/survey/survey_screen.dart';
+import 'package:myapp/menu/menu_screen.dart';
 import 'package:myapp/simple_questions/bloc/simple_questions_bloc.dart';
 import 'package:myapp/simple_questions/simple_questions_gemini_service.dart';
 import 'chat/chat_list/bloc/chat_list_bloc.dart';
@@ -12,7 +13,6 @@ import 'welcome_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'simple_questions/simple_questions_screen.dart';
 import 'theme.dart';
-import 'menu_screen.dart';
 import 'chat/legal_assistant/legal_assistant_screen.dart';
 import 'simulator_screen.dart';
 
