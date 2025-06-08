@@ -20,9 +20,11 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 30), (_) {
+    _timer = Timer.periodic(Duration(seconds: 15), (_) {
       setState(() {
-        _currentPhraseIndex = (_currentPhraseIndex + 1) % _phrases.length;
+        if (_phrases.isNotEmpty) {
+          _currentPhraseIndex = (_currentPhraseIndex + 1) % _phrases.length;
+        }
       });
     });
   }
@@ -35,6 +37,10 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final blocState = context.read<MenuBloc>().state;
+    if (blocState is MenuLoaded && blocState.legalTips.isNotEmpty) {
+      _phrases = blocState.legalTips;
+    }
     return Scaffold(
       backgroundColor: Color(0xFFF8F8F8),
       body: SafeArea(
@@ -94,33 +100,24 @@ class _MenuScreenState extends State<MenuScreen> {
                               ), // sale hacia la izquierda
                             ).animate(animation);
 
-                            // Detectar si es el widget saliente o el entrante
                             return SlideTransition(
-                              position: inAnimation,
+                              position:
+                                  animation.status == AnimationStatus.reverse
+                                      ? outAnimation
+                                      : inAnimation,
                               child: child,
                             );
                           },
-                          child: BlocBuilder<MenuBloc, MenuState>(
-                            builder: (context, state) {
-                              String tip = _phrases[_currentPhraseIndex];
-                              if (state is MenuLoaded &&
-                                  state.legalTips.isNotEmpty) {
-                                _phrases = state.legalTips;
-                                tip =
-                                    state.legalTips[_currentPhraseIndex %
-                                        state.legalTips.length];
-                              }
-                              print(tip);
-                              return Text(
-                                tip,
-                                key: ValueKey(tip),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black87,
-                                ),
-                              );
-                            },
+                          child: Text(
+                            _phrases[_currentPhraseIndex],
+                            key: ValueKey(
+                              _phrases[_currentPhraseIndex],
+                            ), // Cambia para disparar animación
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
                           ),
                         ),
                       ],
