@@ -14,7 +14,7 @@ class SurveyGeminiService {
     String documentName,
   ) async {
     try {
-      final prompt ="""
+      final prompt = """
       Genera un arreglo JSON que contenga los campos necesarios para un formulario titulado "$documentName".
       Cada objeto dentro del arreglo debe incluir las siguientes claves:
       "label": una cadena de texto con el nombre visible del campo.
@@ -48,13 +48,27 @@ class SurveyGeminiService {
     Map<String, dynamic> answers,
   ) async {
     try {
-      final prompt =
-          'Generate the content for a "$documentName" using the following information:\n\n${json.encode(answers)}. Provide only the generated document content as a plain string, without any extra formatting like markdown.';
+      final prompt = '''
+Genera el contenido para un documento titulado "$documentName" utilizando la siguiente información en formato JSON:
+
+${json.encode(answers)}
+
+El documento debe tener un estilo profesional, incluyendo:
+- Títulos y subtítulos en negrilla si corresponde
+- Saltos de línea apropiados para separar secciones
+- Palabras o frases clave también en negrilla si son importantes
+- Redacción formal y coherente
+- No uses formato markdown ni HTML, solo texto plano estructurado
+
+Devuelve únicamente el texto generado, sin ningún encabezado adicional o explicación.
+''';
+
       final content = [Content.text(prompt)];
       final response = await _model.generateContent(content);
 
       if (response.text == null) {
-        throw Exception('Gemini API returned empty response for document generation.');
+        throw Exception(
+            'Gemini API returned empty response for document generation.');
       }
 
       return response.text!.trim();
