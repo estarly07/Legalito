@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:myapp/chat/chat.dart';
-import 'package:myapp/chat/legal_assistant/gemini_chat_service.dart';
+import 'package:legalito/chat/chat.dart';
+import 'package:legalito/chat/legal_assistant/gemini_chat_service.dart';
 import 'package:uuid/uuid.dart';
-import 'package:myapp/database_helper.dart';
-import 'package:myapp/message.dart';
+import 'package:legalito/database_helper.dart';
+import 'package:legalito/message.dart';
 
 abstract class LegalAssistantEvent {
   const LegalAssistantEvent();

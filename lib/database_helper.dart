@@ -1,4 +1,4 @@
-import 'package:myapp/chat/chat.dart';
+import 'package:legalito/chat/chat.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:uuid/uuid.dart';
@@ -60,17 +60,16 @@ class DatabaseHelper {
         whereArgs: [chatMap['id']],
         orderBy: 'timestamp ASC',
       );
-      List<Message> messages =
-          messageMaps
-              .map(
-                (msgMap) => Message.fromMap({
-                  'text': msgMap['text'],
-                  'id': msgMap['id'],
-                  'isUser': msgMap['isUser'] == 1,
-                  'timestamp': msgMap['timestamp'],
-                }),
-              )
-              .toList();
+      List<Message> messages = messageMaps
+          .map(
+            (msgMap) => Message.fromMap({
+              'text': msgMap['text'],
+              'id': msgMap['id'],
+              'isUser': msgMap['isUser'] == 1,
+              'timestamp': msgMap['timestamp'],
+            }),
+          )
+          .toList();
       chats.add(
         Chat(id: chatMap['id'], name: chatMap['name'], messages: messages),
       );
@@ -94,45 +93,53 @@ class DatabaseHelper {
       whereArgs: [chatId],
       orderBy: 'timestamp ASC',
     );
-    List<Message> messages =
-        messageMaps
-            .map(
-              (msgMap) => Message.fromMap({
-                'text': msgMap['text'],
-                'id': msgMap['id'],
-                'isUser': msgMap['isUser'] == 1,
-                'timestamp': msgMap['timestamp'],
-              }),
-            )
-            .toList();
+    List<Message> messages = messageMaps
+        .map(
+          (msgMap) => Message.fromMap({
+            'text': msgMap['text'],
+            'id': msgMap['id'],
+            'isUser': msgMap['isUser'] == 1,
+            'timestamp': msgMap['timestamp'],
+          }),
+        )
+        .toList();
     return Chat(id: chatMap['id'], name: chatMap['name'], messages: messages);
   }
 
   Future<void> insertChat(Chat chat) async {
     final db = await database;
-    await db.insert('chats', {
-      'id': chat.id,
-      'name': chat.name,
-    }, conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert(
+        'chats',
+        {
+          'id': chat.id,
+          'name': chat.name,
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace);
     for (var message in chat.messages) {
-      await db.insert('messages', {
-        'chatId': chat.id,
-        'text': message.text,
-        'isUser': message.isUser ? 1 : 0,
-        'timestamp': message.timestamp.toIso8601String(),
-      }, conflictAlgorithm: ConflictAlgorithm.replace);
+      await db.insert(
+          'messages',
+          {
+            'chatId': chat.id,
+            'text': message.text,
+            'isUser': message.isUser ? 1 : 0,
+            'timestamp': message.timestamp.toIso8601String(),
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace);
     }
     _getAndEmitChats(); // Emit changes
   }
 
   Future<void> addMessageToChat(String chatId, Message message) async {
     final db = await database;
-    await db.insert('messages', {
-      'chatId': chatId,
-      'text': message.text,
-      'isUser': message.isUser ? 1 : 0,
-      'timestamp': message.timestamp.toIso8601String(),
-    }, conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert(
+        'messages',
+        {
+          'chatId': chatId,
+          'text': message.text,
+          'isUser': message.isUser ? 1 : 0,
+          'timestamp': message.timestamp.toIso8601String(),
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<void> _getAndEmitChats() async {

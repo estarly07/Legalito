@@ -1,4 +1,3 @@
-
 sealed class MenuState {
   const MenuState();
 
@@ -7,6 +6,7 @@ sealed class MenuState {
 }
 
 class MenuInitial extends MenuState {}
+
 class MenuLoading extends MenuState {}
 
 class MenuLoaded extends MenuState {

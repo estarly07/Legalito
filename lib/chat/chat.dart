@@ -1,4 +1,4 @@
-import '../message.dart'; // Assuming Message class is in message.dart
+import 'package:legalito/message.dart'; // Assuming Message class is in message.dart
 
 class Chat {
   final String id; // UUID

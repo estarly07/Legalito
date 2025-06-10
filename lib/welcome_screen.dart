@@ -122,22 +122,20 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             _mainButton(
                               context,
                               text: '¡Vamos al Caso!',
-                              onTap:
-                                  () => Navigator.pushReplacementNamed(
-                                    context,
-                                    '/menu',
-                                  ),
+                              onTap: () => Navigator.pushReplacementNamed(
+                                context,
+                                '/menu',
+                              ),
                               filled: true,
                             ),
                             const SizedBox(height: 12),
                             _mainButton(
                               context,
                               text: 'Unirme',
-                              onTap:
-                                  () => Navigator.pushReplacementNamed(
-                                    context,
-                                    '/auth',
-                                  ),
+                              onTap: () => Navigator.pushReplacementNamed(
+                                context,
+                                '/login',
+                              ),
                               filled: false,
                             ),
                           ],
@@ -199,10 +197,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
-            side:
-                filled
-                    ? BorderSide.none
-                    : BorderSide(color: Color(0xfffeeae1), width: 1.5),
+            side: filled
+                ? BorderSide.none
+                : BorderSide(color: Color(0xfffeeae1), width: 1.5),
           ),
         ),
         child: Text(

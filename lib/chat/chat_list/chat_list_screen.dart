@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myapp/database_helper.dart';
 import 'bloc/chat_list_bloc.dart';
+import 'package:legalito/database_helper.dart';
 import 'bloc/chat_list_event.dart';
 import 'bloc/chat_list_state.dart';
 import 'package:timeago/timeago.dart' as timeago;

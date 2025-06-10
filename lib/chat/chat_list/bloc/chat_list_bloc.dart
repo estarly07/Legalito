@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
-import 'package:myapp/chat/chat.dart';
-import 'package:myapp/chat/chat_list/bloc/chat_list_state.dart';
-import 'package:myapp/database_helper.dart';
-import 'package:myapp/chat/chat_list/bloc/chat_list_event.dart';
+import 'package:legalito/chat/chat.dart';
+import 'package:legalito/chat/chat_list/bloc/chat_list_state.dart';
+import 'package:legalito/database_helper.dart';
+import 'package:legalito/chat/chat_list/bloc/chat_list_event.dart';
 
 class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
   final DatabaseHelper _databaseHelper;

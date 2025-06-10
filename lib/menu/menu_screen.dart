@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myapp/menu/bloc/menu_bloc.dart';
-import 'package:myapp/menu/bloc/menu_state.dart';
+import 'package:legalito/menu/bloc/menu_bloc.dart';
+import 'package:legalito/menu/bloc/menu_state.dart';
 
 class MenuScreen extends StatefulWidget {
   @override
@@ -123,7 +123,6 @@ class _MenuScreenState extends State<MenuScreen> {
                       ],
                     ),
                   ),
-
                   Positioned(
                     right: 0,
                     top: -70,
@@ -156,9 +155,8 @@ class _MenuScreenState extends State<MenuScreen> {
                       title: 'Solucionar problemas',
                       image: 'assets/legalito_thinking.png',
                       color: Color(0xFFe4fce4), // pastel verde
-                      onTap:
-                          () =>
-                              Navigator.pushNamed(context, '/simple_questions'),
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/simple_questions'),
                     ),
                   ),
                 ],
@@ -271,7 +269,6 @@ class _Title extends StatelessWidget {
               color: Colors.grey,
             ),
           ),
-
           SizedBox(height: 4),
           Row(
             children: [
@@ -336,7 +333,7 @@ class _BouncingRocketState extends State<BouncingRocket>
     ]).animate(_controller);
 
     _rotationAnimation = Tween<double>(begin: 0.0, end: 2 * 3.1416) // 360°
-    .animate(
+        .animate(
       CurvedAnimation(
         parent: _controller,
         curve: Interval(0.0, 1.0, curve: Curves.easeInOut),
@@ -378,10 +375,9 @@ class _BouncingRocketState extends State<BouncingRocket>
 class BubbleBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = const Color.fromARGB(50, 245, 154, 8) // tono más claro
-          ..style = PaintingStyle.fill;
+    final paint = Paint()
+      ..color = const Color.fromARGB(50, 245, 154, 8) // tono más claro
+      ..style = PaintingStyle.fill;
 
     final bubbles = [
       Offset(20, 20),

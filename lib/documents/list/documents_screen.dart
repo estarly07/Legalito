@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myapp/documents/list/bloc/documents_search_bloc.dart';
-import 'package:myapp/documents/list/bloc/documents_search_event.dart';
-import 'package:myapp/documents/list/bloc/documents_search_state.dart';
-import 'package:myapp/documents/list/documents_gemini_service.dart';
+import 'package:legalito/documents/list/bloc/documents_search_bloc.dart';
+import 'package:legalito/documents/list/bloc/documents_search_event.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:legalito/documents/list/bloc/documents_search_state.dart';
+import 'package:legalito/documents/list/documents_gemini_service.dart';
 
 class DocumentsScreen extends StatefulWidget {
   const DocumentsScreen({Key? key}) : super(key: key);

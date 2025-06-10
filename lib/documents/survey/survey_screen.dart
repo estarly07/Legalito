@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:myapp/documents/survey/bloc/survey_form_bloc.dart';
-import 'package:myapp/documents/survey/bloc/survey_form_event.dart';
-import 'package:myapp/documents/survey/bloc/survey_form_state.dart';
-import 'package:myapp/documents/survey/form_field_model.dart';
-import 'package:myapp/documents/survey/survey_gemini_service.dart';
+import 'package:legalito/documents/survey/bloc/survey_form_bloc.dart';
+import 'package:legalito/documents/survey/bloc/survey_form_event.dart';
+import 'package:legalito/documents/survey/bloc/survey_form_state.dart';
+import 'package:legalito/documents/survey/form_field_model.dart';
+import 'package:legalito/documents/survey/survey_gemini_service.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class SurveyScreen extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myapp/chat/legal_assistant/legal_assistant_screen.dart';
-import 'package:myapp/simple_questions/bloc/simple_questions_bloc.dart';
+import 'package:legalito/chat/legal_assistant/legal_assistant_screen.dart';
+import 'package:legalito/simple_questions/bloc/simple_questions_bloc.dart';
 
 class SimpleQuestionsScreen extends StatefulWidget {
   const SimpleQuestionsScreen({Key? key}) : super(key: key);

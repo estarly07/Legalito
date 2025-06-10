@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:myapp/core/gemini.dart';
+import 'package:legalito/core/gemini.dart';
 
 class SurveyGeminiService {
   late final GenerativeModel _model;

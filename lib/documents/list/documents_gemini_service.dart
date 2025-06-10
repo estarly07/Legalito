@@ -1,5 +1,5 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:myapp/core/gemini.dart'; // Assuming this path is correct
+import 'package:legalito/core/gemini.dart'; // Assuming this path is correct
 
 class DocumentsGeminiService {
   late final GenerativeModel _model;
@@ -28,11 +28,10 @@ class DocumentsGeminiService {
 
       if (response.text != null) {
         // Split the response text into lines to get individual document entries
-        final documentEntries =
-            response.text!
-                .split('\n')
-                .where((line) => line.trim().isNotEmpty)
-                .toList();
+        final documentEntries = response.text!
+            .split('\n')
+            .where((line) => line.trim().isNotEmpty)
+            .toList();
         return documentEntries;
       } else {
         return [];

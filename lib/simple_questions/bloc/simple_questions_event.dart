@@ -1,4 +1,4 @@
-part of 'simple_questions_bloc.dart';
+part of 'package:legalito/simple_questions/bloc/simple_questions_bloc.dart';
 
 abstract class SimpleQuestionsEvent {
   const SimpleQuestionsEvent();

@@ -1,6 +1,4 @@
-
-
-import 'package:myapp/chat/chat.dart';
+import 'package:legalito/chat/chat.dart';
 
 abstract class ChatListState {}
 

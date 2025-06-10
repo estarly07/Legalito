@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myapp/simple_questions/simple_questions_gemini_service.dart';
+import 'package:legalito/simple_questions/simple_questions_gemini_service.dart';
 
 // Events
 abstract class SimpleQuestionsEvent {}

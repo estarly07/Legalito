@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:myapp/chat/legal_assistant/legal_assistant_bloc.dart';
-import 'package:myapp/message.dart';
+import 'package:legalito/message.dart';
+import 'package:legalito/chat/legal_assistant/legal_assistant_bloc.dart';
 
 class LegalAssistantScreen extends StatefulWidget {
   const LegalAssistantScreen({Key? key}) : super(key: key);
@@ -117,50 +117,49 @@ class _LegalAssistantScreenState extends State<LegalAssistantScreen> {
         body: Column(
           children: [
             Expanded(
-              child:
-                  _messages.isEmpty
-                      ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(32.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/legalito_analizing.png',
-                                height: 120,
+              child: _messages.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/legalito_analizing.png',
+                              height: 120,
+                            ),
+                            const SizedBox(height: 24),
+                            const Text(
+                              'Hola, soy Legalito 👋\nCuéntame tu caso legal y te ayudaré.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
                               ),
-                              const SizedBox(height: 24),
-                              const Text(
-                                'Hola, soy Legalito 👋\nCuéntame tu caso legal y te ayudaré.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      )
-                      : ListView.builder(
-                        reverse: true,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 12,
-                        ),
-                        itemCount: _messages.length + (_isLoading ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (_isLoading && index == 0) {
-                            return _buildLoadingBubble();
-                          }
-
-                          final realIndex = _isLoading ? index - 1 : index;
-                          final message =
-                              _messages[_messages.length - 1 - realIndex];
-                          return _buildChatBubble(message);
-                        },
                       ),
+                    )
+                  : ListView.builder(
+                      reverse: true,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 12,
+                      ),
+                      itemCount: _messages.length + (_isLoading ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (_isLoading && index == 0) {
+                          return _buildLoadingBubble();
+                        }
+
+                        final realIndex = _isLoading ? index - 1 : index;
+                        final message =
+                            _messages[_messages.length - 1 - realIndex];
+                        return _buildChatBubble(message);
+                      },
+                    ),
             ),
             _buildInputBar(),
           ],
@@ -173,10 +172,9 @@ class _LegalAssistantScreenState extends State<LegalAssistantScreen> {
     final isUser = message.isUser;
     final alignment = isUser ? Alignment.centerRight : Alignment.centerLeft;
     final bubbleColor = isUser ? const Color(0xFFDCF8C6) : Colors.white;
-    final margin =
-        isUser
-            ? const EdgeInsets.fromLTRB(80, 6, 8, 6)
-            : const EdgeInsets.fromLTRB(8, 6, 80, 6);
+    final margin = isUser
+        ? const EdgeInsets.fromLTRB(80, 6, 8, 6)
+        : const EdgeInsets.fromLTRB(8, 6, 80, 6);
     final shadow = BoxShadow(
       color: Colors.black12,
       blurRadius: 4,
@@ -219,8 +217,6 @@ class _LegalAssistantScreenState extends State<LegalAssistantScreen> {
       ),
     );
   }
-
-  
 
   Widget _buildLoadingBubble() {
     return Align(
@@ -338,96 +334,97 @@ class _AnimatedDotsState extends State<AnimatedDots>
     super.dispose();
   }
 }
+
 Widget formatGeminiResponse(String rawText) {
-    final boldRegex = RegExp(r'\*\*(.*?)\*\*');
-    final bulletRegex = RegExp(r'^- (.*)', multiLine: true);
-    final titleRegex = RegExp(r'^## (.*)', multiLine: true);
+  final boldRegex = RegExp(r'\*\*(.*?)\*\*');
+  final bulletRegex = RegExp(r'^- (.*)', multiLine: true);
+  final titleRegex = RegExp(r'^## (.*)', multiLine: true);
 
-    final lines = rawText.trim().split('\n');
-    final spans = <TextSpan>[];
+  final lines = rawText.trim().split('\n');
+  final spans = <TextSpan>[];
 
-    for (var line in lines) {
-      // Título
-      if (titleRegex.hasMatch(line)) {
-        final match = titleRegex.firstMatch(line);
-        spans.add(
-          TextSpan(
-            text: '${match?.group(1)?.trim()}\n',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: Colors.black87,
-            ),
+  for (var line in lines) {
+    // Título
+    if (titleRegex.hasMatch(line)) {
+      final match = titleRegex.firstMatch(line);
+      spans.add(
+        TextSpan(
+          text: '${match?.group(1)?.trim()}\n',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: Colors.black87,
           ),
-        );
-        continue;
-      }
+        ),
+      );
+      continue;
+    }
 
-      // Lista con viñeta
-      if (bulletRegex.hasMatch(line)) {
-        final match = bulletRegex.firstMatch(line);
-        spans.add(
-          TextSpan(
-            text: '• ${match?.group(1)?.trim()}\n',
-            style: const TextStyle(fontSize: 16, color: Colors.black87),
-          ),
-        );
-        continue;
-      }
+    // Lista con viñeta
+    if (bulletRegex.hasMatch(line)) {
+      final match = bulletRegex.firstMatch(line);
+      spans.add(
+        TextSpan(
+          text: '• ${match?.group(1)?.trim()}\n',
+          style: const TextStyle(fontSize: 16, color: Colors.black87),
+        ),
+      );
+      continue;
+    }
 
-      // Negrita en línea
-      final parts = <TextSpan>[];
-      var currentIndex = 0;
+    // Negrita en línea
+    final parts = <TextSpan>[];
+    var currentIndex = 0;
 
-      for (final match in boldRegex.allMatches(line)) {
-        if (match.start > currentIndex) {
-          parts.add(
-            TextSpan(
-              text: line.substring(currentIndex, match.start),
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
-            ),
-          );
-        }
-
+    for (final match in boldRegex.allMatches(line)) {
+      if (match.start > currentIndex) {
         parts.add(
           TextSpan(
-            text: match.group(1),
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-        );
-
-        currentIndex = match.end;
-      }
-
-      // Agregar el resto del texto si hay
-      if (currentIndex < line.length) {
-        parts.add(
-          TextSpan(
-            text: line.substring(currentIndex),
+            text: line.substring(currentIndex, match.start),
             style: const TextStyle(fontSize: 16, color: Colors.black87),
           ),
         );
       }
 
-      // Si no hay negritas, agregar línea normal
-      spans.addAll(
-        parts.isNotEmpty
-            ? [TextSpan(children: parts), const TextSpan(text: '\n')]
-            : [
+      parts.add(
+        TextSpan(
+          text: match.group(1),
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+      );
+
+      currentIndex = match.end;
+    }
+
+    // Agregar el resto del texto si hay
+    if (currentIndex < line.length) {
+      parts.add(
+        TextSpan(
+          text: line.substring(currentIndex),
+          style: const TextStyle(fontSize: 16, color: Colors.black87),
+        ),
+      );
+    }
+
+    // Si no hay negritas, agregar línea normal
+    spans.addAll(
+      parts.isNotEmpty
+          ? [TextSpan(children: parts), const TextSpan(text: '\n')]
+          : [
               TextSpan(
                 text: line + '\n',
                 style: const TextStyle(fontSize: 16, color: Colors.black87),
               ),
             ],
-      );
-    }
-
-    return SelectableText.rich(
-      TextSpan(children: spans),
-      textAlign: TextAlign.left,
     );
   }
+
+  return SelectableText.rich(
+    TextSpan(children: spans),
+    textAlign: TextAlign.left,
+  );
+}

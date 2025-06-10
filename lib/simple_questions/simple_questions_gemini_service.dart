@@ -1,5 +1,5 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:myapp/core/gemini.dart';
+import 'package:legalito/core/gemini.dart';
 
 class SimpleQuestionsGeminiService {
   late final GenerativeModel _model;
