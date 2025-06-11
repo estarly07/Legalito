@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "446976251465",
+    "project_id": "legalito-5ee33",
+    "storage_bucket": "legalito-5ee33.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:446976251465:android:afadf6a639119a66e61198",
+        "android_client_info": {
+          "package_name": "com.example.legalito"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDn50Wd5vkhZ4JzFfh8ofxV1JE1HxZeV6o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

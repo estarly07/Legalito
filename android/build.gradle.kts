@@ -19,3 +19,13 @@ subprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
+buildscript {
+    repositories {
+        google()       // ✅ Necesario para Firebase
+        mavenCentral() // ✅ También recomendado
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.3.0") // o tu versión actual
+        classpath("com.google.gms:google-services:4.4.0") // ✅ Plugin de Google Services
+    }
+}

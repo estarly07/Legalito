@@ -21,8 +21,12 @@ import 'simple_questions/simple_questions_screen.dart';
 import 'theme.dart';
 import 'chat/legal_assistant/legal_assistant_screen.dart';
 import 'simulator_screen.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
-void main() => runApp(const MyApp());
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
