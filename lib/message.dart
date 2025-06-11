@@ -1,4 +1,3 @@
-
 class Message {
   final String text;
   final bool isUser;
@@ -15,12 +14,13 @@ class Message {
     return {
       'text': text,
       'isUser': isUser,
-      'timestamp': timestamp.toIso8601String(), // Store as string for compatibility
+      'timestamp':
+          timestamp.toIso8601String(), // Store as string for compatibility
     };
   }
 
   // Helper for Firestore and SQLite
-  factory Message.fromMap(Map<String, dynamic> map) {
+  factory Message.fromMap(Map<dynamic, dynamic> map) {
     return Message(
       text: map['text'],
       isUser: map['isUser'],

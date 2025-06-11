@@ -31,37 +31,25 @@ class Chat {
     );
   }
 
+  // Helper for Firebase Realtime Database
   factory Chat.fromFirebase(String chatId, Map<dynamic, dynamic> chatData) {
-    // Safely get the name, assuming it's a String
-    final String? name = chatData['name'] as String?;
-
-    // Safely get the messages list, assuming it's a List of dynamic items
+    // Assuming the Firebase structure for messages is a map where keys are message IDs
+    // or indices and values are the message data.
+    // You might need to adjust this based on your actual Firebase structure.
+    final List<Message> messagesList = [];
     final dynamic messagesData = chatData['messages'];
-    List<Message> messagesList = [];
-
-    if (messagesData is List) {
-      // Iterate through the list of messages
-      for (final messageItem in messagesData) {
-        // Safely cast each item to a Map<String, dynamic>
-        if (messageItem is Map) {
-          try {
-            // Attempt to create a Message object from the map
-            // You might need to adjust Message.fromMap or create a new Message.fromFirebase
-            // that handles the dynamic types from Firebase.
-            messagesList
-                .add(Message.fromMap(Map<String, dynamic>.from(messageItem)));
-          } catch (e) {
-            // Handle potential errors during message parsing
-            print('Error parsing message data: $e');
-          }
-        }
-      }
+    if (messagesData is Map<dynamic, dynamic>) {
+      // Iterate through the map entries to handle dynamic keys
+      messagesData.entries.forEach((entry) {
+        // Assuming Message has a fromMap constructor that can handle dynamic keys/values
+        Map<dynamic, dynamic> value = entry.value;
+        messagesList.add(Message.fromMap(value));
+      });
     }
 
-    // Return the Chat object
     return Chat(
       id: chatId,
-      name: name ?? 'Sin nombre', // Provide a default name if needed
+      name: chatData['name'] as String,
       messages: messagesList,
     );
   }
