@@ -17,3 +17,5 @@ class MenuLoaded extends MenuState {
   @override
   List<Object> get props => [legalTips];
 }
+
+class MenuLogoutSuccess extends MenuState {}

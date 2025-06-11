@@ -2,10 +2,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:legalito/menu/bloc/menu_event.dart';
 import 'package:legalito/menu/bloc/menu_state.dart';
 import 'package:legalito/menu/menu_gemini_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuBloc extends Bloc<MenuEvent, MenuState> {
   MenuBloc() : super(MenuInitial()) {
     on<FetchLegalTipsEvent>(_onFetchLegalTips);
+    on<LogoutEvent>(_onLogout);
   }
 
   Future<void> _onFetchLegalTips(
@@ -21,5 +24,17 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       // Handle error, potentially emit an error state
       print('Error fetching legal tips: $e');
     }
+  }
+
+  Future<void> _onLogout(
+      LogoutEvent event,
+      Emitter<MenuState> emit,
+      ) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', false);
+      emit(MenuLogoutSuccess());
+    } catch (e) {}
   }
 }

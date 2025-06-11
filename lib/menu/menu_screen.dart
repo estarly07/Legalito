@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:legalito/menu/bloc/menu_bloc.dart';
+import 'package:legalito/menu/bloc/menu_event.dart';
 import 'package:legalito/menu/bloc/menu_state.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -256,35 +257,63 @@ class _Title extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 24),
-          Text(
-            "¡Hey!",
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey,
-            ),
-          ),
-          SizedBox(height: 4),
-          Row(
+    return Row(
+      children: [
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 24),
               Text(
-                "Soy Legalito",
+                "¡Hey!",
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: Colors.grey,
                 ),
               ),
-              const BouncingRocket(),
+              SizedBox(height: 4),
+              Row(
+                children: [
+                  Text(
+                    "Soy Legalito",
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const BouncingRocket(),
+                ],
+              ),
             ],
           ),
-        ],
-      ),
+        ),
+        BlocConsumer<MenuBloc, MenuState>(listener: (context, state) {
+          if (state is MenuLogoutSuccess) {
+            Navigator.of(context).pushReplacementNamed('/bienvenida');
+          }
+        }, builder: (context, state) {
+          return Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 2,
+            color: Colors.white,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () {
+                BlocProvider.of<MenuBloc>(context).add(LogoutEvent());
+              },
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(Icons.exit_to_app_rounded,
+                    color: Color(0xFFFA4A0C), size: 24),
+              ),
+            ),
+          );
+        }),
+      ],
     );
   }
 }
