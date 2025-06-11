@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:legalito/database_helper.dart';
 import 'package:legalito/menu/bloc/menu_event.dart';
 import 'package:legalito/menu/bloc/menu_state.dart';
 import 'package:legalito/menu/menu_gemini_service.dart';
@@ -27,10 +28,11 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   }
 
   Future<void> _onLogout(
-      LogoutEvent event,
-      Emitter<MenuState> emit,
-      ) async {
+    LogoutEvent event,
+    Emitter<MenuState> emit,
+  ) async {
     try {
+      await DatabaseHelper().deleteAllChats();
       await FirebaseAuth.instance.signOut();
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', false);

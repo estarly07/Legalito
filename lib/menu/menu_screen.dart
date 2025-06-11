@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:legalito/menu/bloc/menu_bloc.dart';
 import 'package:legalito/menu/bloc/menu_event.dart';
 import 'package:legalito/menu/bloc/menu_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuScreen extends StatefulWidget {
   @override
@@ -302,8 +303,108 @@ class _Title extends StatelessWidget {
             color: Colors.white,
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
-              onTap: () {
-                BlocProvider.of<MenuBloc>(context).add(LogoutEvent());
+              onTap: () async {
+                final prefs = await SharedPreferences.getInstance();
+                final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+                if (isLoggedIn) {
+                  // Show confirmation dialog
+                  final confirmed = await showDialog<bool>(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (context) => Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          elevation: 10,
+                          backgroundColor: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 30),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.logout,
+                                  size: 48,
+                                  color: Colors.orange,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Cerrar Sesión',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  '¿Estás seguro de que quieres cerrar sesión?',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      child: OutlinedButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(false),
+                                        style: OutlinedButton.styleFrom(
+                                          side: BorderSide(color: Colors.grey),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'Cancelar',
+                                          style: TextStyle(
+                                              color: Colors.grey[800]),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(true),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.orange,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          elevation: 5,
+                                        ),
+                                        child: Text(
+                                          'Cerrar',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ) ??
+                      false;
+// In case dialog is dismissed by tapping outside
+
+                  if (confirmed) {
+                    BlocProvider.of<MenuBloc>(context).add(LogoutEvent());
+                  }
+                } else {
+                  BlocProvider.of<MenuBloc>(context).add(LogoutEvent());
+                }
               },
               child: const Padding(
                 padding: EdgeInsets.all(8.0),
