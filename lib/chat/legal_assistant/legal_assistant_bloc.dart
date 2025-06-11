@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:legalito/chat/chat.dart';
 import 'package:legalito/chat/legal_assistant/gemini_chat_service.dart';
 import 'package:uuid/uuid.dart';
@@ -80,6 +82,8 @@ class LegalAssistantBloc
     Emitter<LegalAssistantState> emit,
   ) async {
     try {
+      final user = FirebaseAuth.instance.currentUser;
+
       if (_currentChat == null) {
         // Create a new chat if none exists
         final String newChatId = const Uuid().v4();
@@ -90,6 +94,22 @@ class LegalAssistantBloc
         );
         await _databaseHelper.insertChat(newChat);
         _currentChat = newChat; // Set the current chat
+
+        if (user != null) {
+          // Save initial chat structure to Firebase
+          final DatabaseReference userChatsRef =
+              FirebaseDatabase.instance.ref('users/${user.uid}/chats');
+          await userChatsRef.child(_currentChat!.id).set({
+            'name': _currentChat!.name,
+            'messages': [], // Initialize with an empty messages list
+          });
+        }
+      }
+
+      if (user == null) {
+        // If user is not logged in, just proceed with local saving and return
+        // without attempting to save to Firebase.
+        // The rest of the method handles local saving.
       }
 
       final List<Message> currentMessages =
@@ -107,6 +127,15 @@ class LegalAssistantBloc
       );
       currentMessages.add(userMessage);
       emit(LegalAssistantLoaded(currentMessages));
+
+      if (user != null) {
+        // Save user message to Firebase
+        final DatabaseReference userMessageRef = FirebaseDatabase.instance
+            .ref('users/${user.uid}/chats/${_currentChat!.id}/messages');
+        await userMessageRef.push().set(userMessage.toMap());
+      }
+
+      // Add user message to the current chat in the database
       await _databaseHelper.addMessageToChat(_currentChat!.id, userMessage);
       emit(LegalAssistantLoading());
 
@@ -140,6 +169,15 @@ class LegalAssistantBloc
         timestamp: DateTime.now(),
       );
       currentMessages.add(geminiMessage);
+
+      if (user != null) {
+        // Save assistant message to Firebase
+        final DatabaseReference geminiMessageRef = FirebaseDatabase.instance
+            .ref('users/${user.uid}/chats/${_currentChat!.id}/messages');
+        await geminiMessageRef.push().set(geminiMessage.toMap());
+      }
+
+
 
       // Add assistant message to the current chat in the database
       await _databaseHelper.addMessageToChat(_currentChat!.id, geminiMessage);
