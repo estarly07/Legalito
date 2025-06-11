@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'login_service.dart';
 
 // Events
@@ -37,6 +38,11 @@ class LoginError extends LoginState {
   LoginError(this.error);
 }
 
+Future<void> _saveLoginStatus(bool isLoggedIn) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('isLoggedIn', isLoggedIn);
+}
+
 // BLoC
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginService _loginService;
@@ -53,6 +59,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       await _loginService.signInWithEmailAndPassword(
           event.email, event.password);
+      await _saveLoginStatus(true);
       emit(LoginSuccess());
     } on FirebaseAuthException catch (e) {
       emit(LoginError(e.message ?? 'An unknown error occurred'));
@@ -67,6 +74,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       await _loginService.signUpWithEmailAndPassword(
           event.email, event.password);
+      await _saveLoginStatus(true);
       emit(LoginSuccess());
     } on FirebaseAuthException catch (e) {
       emit(LoginError(e.message ?? 'An unknown error occurred'));

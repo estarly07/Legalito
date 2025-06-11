@@ -20,10 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocConsumer<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is LoginSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Operation Successful!')),
-            );
-            // You might want to navigate to another screen here
+            Navigator.of(context).pushReplacementNamed('/menu');
           } else if (state is LoginError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Error: ${state.error}')),

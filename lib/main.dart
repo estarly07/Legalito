@@ -21,56 +21,54 @@ import 'simple_questions/simple_questions_screen.dart';
 import 'theme.dart';
 import 'chat/legal_assistant/legal_assistant_screen.dart';
 import 'simulator_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  final prefs = await SharedPreferences.getInstance();
+  final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
-  runApp(MyApp());
+  runApp(MyApp(initialRoute: isLoggedIn ? '/menu' : '/bienvenida'));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String initialRoute;
+  MyApp({required this.initialRoute});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final db = DatabaseHelper();
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Legalito',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(), // Apply the custom theme
-      initialRoute: '/bienvenida',
+      initialRoute: initialRoute,
       routes: {
         '/bienvenida': (context) => const WelcomeScreen(),
-        '/menu':
-            (context) => BlocProvider(
+        '/menu': (context) => BlocProvider(
               create: (context) => MenuBloc()..add(FetchLegalTipsEvent()),
               child: MenuScreen(),
             ),
         '/suvey_document': (context) => SurveyScreen(),
-        '/asistente_legal':
-            (context) => BlocProvider(
+        '/asistente_legal': (context) => BlocProvider(
               create: (context) => LegalAssistantBloc(db),
               child: const LegalAssistantScreen(),
             ),
-        '/chats':
-            (context) => BlocProvider(
+        '/chats': (context) => BlocProvider(
               create: (context) => ChatListBloc(db),
               child: const ChatListScreen(),
             ),
         '/documentos': (context) => const DocumentsScreen(),
-        '/simple_questions':
-            (context) => BlocProvider(
-              create:
-                  (context) =>
-                      SimpleQuestionsBloc(SimpleQuestionsGeminiService()),
+        '/simple_questions': (context) => BlocProvider(
+              create: (context) =>
+                  SimpleQuestionsBloc(SimpleQuestionsGeminiService()),
               child: const SimpleQuestionsScreen(),
             ),
         '/simulador': (context) => const SimulatorScreen(),
         '/login': (context) => BlocProvider(
-              create:
-                  (context) =>
-                      LoginBloc(LoginService()),
+              create: (context) => LoginBloc(LoginService()),
               child: LoginScreen(),
             ),
       },
