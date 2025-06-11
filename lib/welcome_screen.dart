@@ -132,7 +132,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             _mainButton(
                               context,
                               text: 'Unirme',
-                              onTap: () => Navigator.pushReplacementNamed(
+                              onTap: () => Navigator.pushNamed(
                                 context,
                                 '/login',
                               ),
