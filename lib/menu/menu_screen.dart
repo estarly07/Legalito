@@ -128,11 +128,16 @@ class _MenuScreenState extends State<MenuScreen> {
                   Positioned(
                     right: 0,
                     top: -70,
-                    child: Image.asset(
-                      'assets/legalito_banner.png',
-                      width: 130,
-                      height: 180,
-                      fit: BoxFit.fill,
+                    child: GestureDetector(
+                      onDoubleTap: () {
+                        Navigator.pushNamed(context, "/flappy");
+                      },
+                      child: Image.asset(
+                        'assets/legalito_banner.png',
+                        width: 130,
+                        height: 180,
+                        fit: BoxFit.fill,
+                      ),
                     ),
                   ),
                 ],

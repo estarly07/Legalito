@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:legalito/chat/chat_list/chat_list_screen.dart';
 import 'package:legalito/database_helper.dart';
+import 'package:legalito/game/legalito_game.dart';
+import 'package:flame/game.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:legalito/chat/legal_assistant/legal_assistant_bloc.dart';
 import 'package:legalito/documents/list/documents_screen.dart';
 import 'package:legalito/documents/survey/survey_screen.dart';
+import 'package:legalito/game/overlays/game_over_overlay.dart';
+import 'package:legalito/game/overlays/game_start_overlay.dart';
 import 'package:legalito/login/login_bloc.dart';
 import 'package:legalito/login/login_screen.dart';
 import 'package:legalito/login/login_service.dart';
@@ -18,7 +21,6 @@ import 'chat/chat_list/bloc/chat_list_bloc.dart';
 import 'welcome_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'simple_questions/simple_questions_screen.dart';
-import 'theme.dart';
 import 'chat/legal_assistant/legal_assistant_screen.dart';
 import 'simulator_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -71,6 +73,16 @@ class MyApp extends StatelessWidget {
               create: (context) => LoginBloc(LoginService()),
               child: LoginScreen(),
             ),
+        '/flappy': (context) => GameWidget<LegalitoGame>(
+              game: LegalitoGame(),
+              initialActiveOverlays: const [
+                'start'
+              ], // Aquí se muestra al comenzar
+              overlayBuilderMap: {
+                'start': (context, game) => StartOverlay(game: game),
+                'gameOver': (context, game) => GameOverOverlay(game: game),
+              },
+            )
       },
     );
   }
