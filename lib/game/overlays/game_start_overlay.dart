@@ -67,9 +67,7 @@ class StartOverlay extends StatelessWidget {
           bottom: 50,
           left: 0,
           right: 0,
-          child: Text(
-            'Mayor puntuación:\n${game.highScore}',
-            textAlign: TextAlign.center,
+          child: DefaultTextStyle(
             style: TextStyle(
               fontSize: 24,
               color: Colors.white,
@@ -81,6 +79,10 @@ class StartOverlay extends StatelessWidget {
                   color: Colors.black,
                 ),
               ],
+            ),
+            child: Text(
+              'Mayor puntuación:\n${game.highScore}',
+              textAlign: TextAlign.center,
             ),
           ),
         ),
