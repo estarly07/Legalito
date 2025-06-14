@@ -78,7 +78,6 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
     bird.position = Vector2(100, size.y / 2);
     bird.angle = 0;
     isGameStarted = true; // 🔥 Vuelve a arrancar el juego
-    resumeEngine();
   }
 
   @override
@@ -106,6 +105,9 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
     overlays.add('gameOver');
 
     // Detener el loop del juego (opcional si lo necesitas)
+  }
+
+  void stopGame() {
     pauseEngine();
   }
 

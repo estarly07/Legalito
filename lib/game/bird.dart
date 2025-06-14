@@ -11,7 +11,7 @@ class Bird extends SpriteComponent
   final double jumpVelocity = -300;
   double velocityY = 0;
 
-  Bird() : super(size: Vector2.all(100.0));
+  Bird() : super(size: Vector2(80, 100.0));
 
   @override
   Future<void> onLoad() async {
@@ -44,7 +44,6 @@ class Bird extends SpriteComponent
 
   void jump() {
     velocityY = jumpVelocity;
-    FlameAudio.play(GameAssets.flapSound);
   }
 
   @override

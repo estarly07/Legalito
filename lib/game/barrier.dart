@@ -8,7 +8,7 @@ import 'legalito_game.dart';
 class Barrier extends PositionComponent
     with HasGameRef<LegalitoGame>, CollisionCallbacks {
   static const double speed = 150;
-  static const double gapSize = 150;
+  static const double gapSize = 160;
 
   late RectangleComponent topPipe;
   late RectangleComponent bottomPipe;
@@ -25,7 +25,7 @@ class Barrier extends PositionComponent
     size = Vector2(80, gameRef.size.y);
 
     final random = Random();
-    final holeY = 125 + random.nextDouble() * (gameRef.size.y - 200 - gapSize);
+    final holeY = 100 + random.nextDouble() * (gameRef.size.y - 200 - gapSize);
     final pipeWidth = 40.0;
     final pipeXPosition = 25.0;
 
