@@ -9,7 +9,7 @@ class GameAssets {
 
   // Barreras (pipes)
   static const String pipeTop = 'barrier_top.png';
-  static const String pipeBottom = 'barrier.png';
+  static const String pipeBottom = 'barrier_bottom.png';
 
   // Fondo del juego
   static const String backgroundGame = 'background.png';

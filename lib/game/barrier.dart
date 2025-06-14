@@ -25,12 +25,14 @@ class Barrier extends PositionComponent
     size = Vector2(80, gameRef.size.y);
 
     final random = Random();
-    final holeY = 100 + random.nextDouble() * (gameRef.size.y - 200 - gapSize);
+    final holeY = 125 + random.nextDouble() * (gameRef.size.y - 200 - gapSize);
+    final pipeWidth = 40.0;
+    final pipeXPosition = 25.0;
 
     // === TUBERÍA SUPERIOR ===
     topPipe = RectangleComponent(
-      size: Vector2(80, holeY),
-      position: Vector2(0, 0),
+      size: Vector2(pipeWidth, holeY),
+      position: Vector2(pipeXPosition, 0),
       paint: Paint()
         ..color = const Color(0xFF4CAF50).withOpacity(0), // invisible
     )..add(RectangleHitbox());
@@ -38,23 +40,25 @@ class Barrier extends PositionComponent
 
     final topImage = SpriteComponent()
       ..sprite = await gameRef.loadSprite(GameAssets.pipeTop)
-      ..size = topPipe.size
-      ..position = topPipe.position;
+      ..size = Vector2(pipeWidth * 2, holeY)
+      ..position = Vector2(0, 0);
     add(topImage);
 
     // === TUBERÍA INFERIOR ===
+    final pipeHeightBottom = gameRef.size.y - holeY - gapSize;
+    final pipePostionYBottom = holeY + gapSize;
     bottomPipe = RectangleComponent(
-      size: Vector2(80, gameRef.size.y - holeY - gapSize),
-      position: Vector2(0, holeY + gapSize),
+      size: Vector2(pipeWidth, pipeHeightBottom),
+      position: Vector2(pipeXPosition, pipePostionYBottom),
       paint: Paint()
-        ..color = const Color(0xFF4CAF50).withOpacity(1), // invisible
+        ..color = const Color(0xFF4CAF50).withOpacity(0), // invisible
     )..add(RectangleHitbox());
     add(bottomPipe);
 
     final bottomImage = SpriteComponent()
       ..sprite = await gameRef.loadSprite(GameAssets.pipeBottom)
-      ..size = bottomPipe.size
-      ..position = bottomPipe.position;
+      ..size = Vector2(pipeWidth * 2, pipeHeightBottom)
+      ..position = Vector2(0, pipePostionYBottom);
     add(bottomImage);
   }
 
