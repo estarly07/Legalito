@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:legalito/chat/legal_assistant/legal_assistant_bloc.dart';
 import 'package:legalito/documents/list/documents_screen.dart';
 import 'package:legalito/documents/survey/survey_screen.dart';
+import 'package:legalito/game/overlays/countdown_overlay.dart';
 import 'package:legalito/game/overlays/game_over_overlay.dart';
 import 'package:legalito/game/overlays/game_start_overlay.dart';
 import 'package:legalito/login/login_bloc.dart';
@@ -81,6 +82,7 @@ class MyApp extends StatelessWidget {
               overlayBuilderMap: {
                 'start': (context, game) => StartOverlay(game: game),
                 'gameOver': (context, game) => GameOverOverlay(game: game),
+                'countdown': (context, game) => CountdownOverlay(game: game),
               },
             )
       },

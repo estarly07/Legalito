@@ -50,8 +50,8 @@ class StartOverlay extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
             ),
             onPressed: () {
-              game.isGameStarted = true;
               game.overlays.remove('start');
+              game.overlays.add('countdown'); // Mostrar cuenta atrás
             },
             child: const Text(
               'Jugar',

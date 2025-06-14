@@ -87,6 +87,8 @@ class GameOverOverlay extends StatelessWidget {
                 onTap: () {
                   game.resetGame();
                   game.overlays.remove('gameOver');
+                  game.overlays.add(
+                      'countdown'); // Mostrar cuenta atrás antes de reiniciar
                 },
                 child: Container(
                   width: 64,
