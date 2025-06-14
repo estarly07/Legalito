@@ -6,6 +6,8 @@ class GameAssets {
   static const String pipe = '${_assetBase}images/barrier.png';
 
   static const String legalitoGame = 'legalito_falling.png';
+  static const String legalitoFlying = 'legalito_flying.png';
+  static const String legalitoCrying = 'legalito_crying.png';
 
   // Barreras (pipes)
   static const String pipeTop = 'barrier_top.png';
