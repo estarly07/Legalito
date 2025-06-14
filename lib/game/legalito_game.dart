@@ -2,14 +2,18 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:legalito/game/background.dart';
 import 'package:legalito/game/bird.dart';
+import 'package:legalito/game/bloc/high_score_bloc.dart';
+import 'package:legalito/game/bloc/high_score_event.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'barrier.dart';
 
 class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
   late Bird bird;
   late TextComponent scoreText;
-
+  final BuildContext context;
   int score = 0;
   double _barrierTimer = 0;
   final double _barrierInterval =
@@ -19,7 +23,8 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
 
   bool isGameStarted = false;
   bool isGameOver = false;
-  int highScore = 0;
+
+  LegalitoGame({super.children, super.world, super.camera, required this.context});
 
   @override
   Future<void> onLoad() async {
@@ -102,7 +107,7 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
 
     // Mostrar botón de reintentar o volver al menú
     overlays.add('gameOver');
-
+    context.read<HighScoreBloc>().add(UpdateHighScore(score));
     // Detener el loop del juego (opcional si lo necesitas)
   }
 

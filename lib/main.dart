@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:legalito/chat/chat_list/chat_list_screen.dart';
 import 'package:legalito/database_helper.dart';
+import 'package:legalito/game/bloc/high_score_bloc.dart';
 import 'package:legalito/game/legalito_game.dart';
 import 'package:flame/game.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -43,49 +44,52 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final db = DatabaseHelper();
-    return MaterialApp(
-      title: 'Legalito',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(), // Apply the custom theme
-      initialRoute: initialRoute,
-      routes: {
-        '/bienvenida': (context) => const WelcomeScreen(),
-        '/menu': (context) => BlocProvider(
-              create: (context) => MenuBloc()..add(FetchLegalTipsEvent()),
-              child: MenuScreen(),
-            ),
-        '/suvey_document': (context) => SurveyScreen(),
-        '/asistente_legal': (context) => BlocProvider(
-              create: (context) => LegalAssistantBloc(db),
-              child: const LegalAssistantScreen(),
-            ),
-        '/chats': (context) => BlocProvider(
-              create: (context) => ChatListBloc(db),
-              child: const ChatListScreen(),
-            ),
-        '/documentos': (context) => const DocumentsScreen(),
-        '/simple_questions': (context) => BlocProvider(
-              create: (context) =>
-                  SimpleQuestionsBloc(SimpleQuestionsGeminiService()),
-              child: const SimpleQuestionsScreen(),
-            ),
-        '/simulador': (context) => const SimulatorScreen(),
-        '/login': (context) => BlocProvider(
-              create: (context) => LoginBloc(LoginService()),
-              child: LoginScreen(),
-            ),
-        '/flappy': (context) => GameWidget<LegalitoGame>(
-              game: LegalitoGame(),
-              initialActiveOverlays: const [
-                'start'
-              ], // Aquí se muestra al comenzar
-              overlayBuilderMap: {
-                'start': (context, game) => StartOverlay(game: game),
-                'gameOver': (context, game) => GameOverOverlay(game: game),
-                'countdown': (context, game) => CountdownOverlay(game: game),
-              },
-            )
-      },
-    );
+    return BlocProvider(
+        create: (context) => HighScoreBloc(),
+        child: MaterialApp(
+            title: 'Legalito',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData.light(), // Apply the custom theme
+            initialRoute: initialRoute,
+            routes: {
+              '/bienvenida': (context) => const WelcomeScreen(),
+              '/menu': (context) => BlocProvider(
+                    create: (context) => MenuBloc()..add(FetchLegalTipsEvent()),
+                    child: MenuScreen(),
+                  ),
+              '/suvey_document': (context) => SurveyScreen(),
+              '/asistente_legal': (context) => BlocProvider(
+                    create: (context) => LegalAssistantBloc(db),
+                    child: const LegalAssistantScreen(),
+                  ),
+              '/chats': (context) => BlocProvider(
+                    create: (context) => ChatListBloc(db),
+                    child: const ChatListScreen(),
+                  ),
+              '/documentos': (context) => const DocumentsScreen(),
+              '/simple_questions': (context) => BlocProvider(
+                    create: (context) =>
+                        SimpleQuestionsBloc(SimpleQuestionsGeminiService()),
+                    child: const SimpleQuestionsScreen(),
+                  ),
+              '/simulador': (context) => const SimulatorScreen(),
+              '/login': (context) => BlocProvider(
+                    create: (context) => LoginBloc(LoginService()),
+                    child: LoginScreen(),
+                  ),
+              '/flappy': (context) => GameWidget<LegalitoGame>(
+                    game: LegalitoGame(context: context),
+                    initialActiveOverlays: const [
+                      'start'
+                    ], // Aquí se muestra al comenzar
+                    overlayBuilderMap: {
+                      'start': (context, game) => StartOverlay(game: game),
+                      'gameOver': (context, game) =>
+                          GameOverOverlay(game: game),
+                      'countdown': (context, game) =>
+                          CountdownOverlay(game: game),
+                    },
+                  )
+            }));
   }
 }

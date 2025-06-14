@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:legalito/game/bloc/high_score_bloc.dart';
+import 'package:legalito/game/bloc/high_score_state.dart';
 import 'package:legalito/game/game_assets.dart';
 import 'package:legalito/game/legalito_game.dart';
 
@@ -68,23 +71,34 @@ class StartOverlay extends StatelessWidget {
           left: 0,
           right: 0,
           child: DefaultTextStyle(
-            style: TextStyle(
-              fontSize: 24,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              shadows: [
-                Shadow(
-                  offset: Offset(1, 1),
-                  blurRadius: 50,
-                  color: Colors.black,
-                ),
-              ],
-            ),
-            child: Text(
-              'Mayor puntuación:\n${game.highScore}',
-              textAlign: TextAlign.center,
-            ),
-          ),
+              style: TextStyle(
+                fontSize: 24,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                shadows: [
+                  Shadow(
+                    offset: Offset(1, 1),
+                    blurRadius: 50,
+                    color: Colors.black,
+                  ),
+                ],
+              ),
+              child: BlocBuilder<HighScoreBloc, HighScoreState>(
+                builder: (context, state) {
+                  if (state is HighScoreLoaded) {
+                    return Text(
+                      'Mayor puntuación:\n${state.highScore}',
+                      textAlign: TextAlign.center,
+                    );
+                  } else if (state is HighScoreLoading) {
+                    return CircularProgressIndicator(); // Or a loading indicator
+                  } 
+                  return Text(
+                      'Mayor puntuación:\n0',
+                      textAlign: TextAlign.center,
+                    );
+                },
+              )),
         ),
         // Imagen de Legalito en esquina inferior derecha
       ],
