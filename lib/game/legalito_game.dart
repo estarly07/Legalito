@@ -48,7 +48,7 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
   Future<void> addScoreText() async {
     scoreText = TextComponent(
       text: '0',
-      position: Vector2(size.x / 2 - 10, 20),
+      position: Vector2(size.x / 2, 20),
       anchor: Anchor.topCenter,
       textRenderer: TextPaint(
         style: const TextStyle(

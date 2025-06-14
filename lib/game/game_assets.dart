@@ -15,6 +15,8 @@ class GameAssets {
 
   // Fondo del juego
   static const String backgroundGame = 'background.png';
+  static const String backgroundNight = 'background_night.png';
+  static const String backgroundMorning = 'background_morning.png';
 
   // Sonidos (opcional)
   static const String flapSound = 'fly.mp3';
