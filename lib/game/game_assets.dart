@@ -8,6 +8,7 @@ class GameAssets {
   static const String legalitoGame = 'legalito_falling.png';
   static const String legalitoFlying = 'legalito_flying.png';
   static const String legalitoCrying = 'legalito_crying.png';
+  static const String legalitoDolphin = 'legalito_dolphin.png';
 
   // Barreras (pipes)
   static const String pipeTop = 'barrier_top.png';

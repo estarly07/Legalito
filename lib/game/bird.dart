@@ -65,6 +65,11 @@ class Bird extends SpriteComponent
   }
 
   Future<void> _setState(BirdState state) async {
+    if (game.score > 20) {
+      sprite = await gameRef.loadSprite(GameAssets.legalitoDolphin);
+      add(SizeEffect.to(Vector2(50, 60), EffectController(duration: 0.2)));
+      return;
+    }
     if (_state == state) return;
     _state = state;
 
