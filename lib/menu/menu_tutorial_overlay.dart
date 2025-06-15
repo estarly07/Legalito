@@ -62,7 +62,11 @@ class _MenuTutorialOverlayState extends State<MenuTutorialOverlay> {
       child: Stack(
         children: [
           // Fondo oscuro que avanza el paso al tocar
-          Container(color: Colors.black.withOpacity(0.7)),
+          // The tutorial overlay
+          CustomPaint(
+            size: Size.infinite,
+            painter: OverlayWithHolePainter(targetKey: current.highlightKey),
+          ),
 
           // Área resaltada - DEBE ESTAR directamente dentro del Stack
           IgnorePointer(
@@ -141,5 +145,54 @@ class _HighlightBox extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
     );
+  }
+}
+
+class OverlayWithHolePainter extends CustomPainter {
+  final double borderRadius;
+  final GlobalKey targetKey;
+
+  OverlayWithHolePainter({
+    required this.targetKey,
+    this.borderRadius = 16,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Rect? holeRect = _getHolePosition();
+    if (holeRect == null) return;
+
+    final overlayPaint = Paint()
+      ..color = Colors.black.withOpacity(0.7)
+      ..style = PaintingStyle.fill;
+
+    final clearPaint = Paint()..blendMode = BlendMode.clear;
+
+    // Draw background layer
+    canvas.saveLayer(Offset.zero & size, Paint());
+
+    // Draw the dark overlay
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), overlayPaint);
+
+    // Clear the hole with rounded corners
+    final holePath = Path()
+      ..addRRect(
+          RRect.fromRectAndRadius(holeRect, Radius.circular(borderRadius)));
+
+    canvas.drawPath(holePath, clearPaint);
+
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  Rect? _getHolePosition() {
+    final RenderBox? renderBox =
+        targetKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      final position = renderBox.localToGlobal(Offset.zero);
+      return position & renderBox.size;
+    }
+    return null;
   }
 }
