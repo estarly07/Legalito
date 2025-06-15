@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:legalito/menu/bloc/menu_bloc.dart';
 import 'package:legalito/menu/bloc/menu_event.dart';
 import 'package:legalito/menu/bloc/menu_state.dart';
+import 'package:legalito/menu/menu_tutorial_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -28,6 +29,17 @@ class _MenuScreenState extends State<MenuScreen> {
           _currentPhraseIndex = (_currentPhraseIndex + 1) % _phrases.length;
         }
       });
+    });
+    // Esperar hasta que se dibuje el primer frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.of(context).push(
+        PageRouteBuilder(
+          opaque: false,
+          pageBuilder: (_, __, ___) => MenuTutorialOverlay(
+            onFinish: () => Navigator.of(context).pop(),
+          ),
+        ),
+      );
     });
   }
 
@@ -133,6 +145,7 @@ class _MenuScreenState extends State<MenuScreen> {
                         Navigator.pushNamed(context, "/flappy");
                       },
                       child: Image.asset(
+                        key: GlobalObjectKey('legalitoBanner'),
                         'assets/legalito_banner.png',
                         width: 130,
                         height: 180,
@@ -150,6 +163,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 children: [
                   Expanded(
                     child: _buildFlatCard(
+                      key: "asistenteLegal",
                       title: 'Asistente Legal',
                       image: 'assets/legalito_chat.png',
                       color: Color(0xfffeeae1), // pastel naranja
@@ -159,6 +173,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   SizedBox(width: 16),
                   Expanded(
                     child: _buildFlatCard(
+                      key: "solucionarProblema",
                       title: 'Solucionar problemas',
                       image: 'assets/legalito_thinking.png',
                       color: Color(0xFFe4fce4), // pastel verde
@@ -173,6 +188,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
               // 4. Tarjeta de documentos con sombra tipo buscador
               GestureDetector(
+                key: GlobalObjectKey('documentos'),
                 onTap: () => Navigator.pushNamed(context, '/documentos'),
                 child: Container(
                   padding: EdgeInsets.all(20),
@@ -225,11 +241,13 @@ class _MenuScreenState extends State<MenuScreen> {
 
   Widget _buildFlatCard({
     required String title,
+    required String key,
     required String image,
     required Color color,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
+      key: GlobalObjectKey(key),
       onTap: onTap,
       child: Container(
         height: 120,
@@ -293,6 +311,31 @@ class _Title extends StatelessWidget {
                 ],
               ),
             ],
+          ),
+        ),
+        Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+          color: Colors.white,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () async {
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  opaque: false,
+                  pageBuilder: (_, __, ___) => MenuTutorialOverlay(
+                    onFinish: () => Navigator.of(context).pop(),
+                  ),
+                ),
+              );
+            },
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.question_mark_outlined,
+                  color: Color.fromARGB(255, 12, 250, 190), size: 24),
+            ),
           ),
         ),
         BlocConsumer<MenuBloc, MenuState>(listener: (context, state) {
