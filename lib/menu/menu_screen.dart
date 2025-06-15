@@ -31,15 +31,20 @@ class _MenuScreenState extends State<MenuScreen> {
       });
     });
     // Esperar hasta que se dibuje el primer frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.of(context).push(
-        PageRouteBuilder(
-          opaque: false,
-          pageBuilder: (_, __, ___) => MenuTutorialOverlay(
-            onFinish: () => Navigator.of(context).pop(),
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final prefs = await SharedPreferences.getInstance();
+      final showTutorial = !(prefs.getBool('tutorialShown') ?? false);
+      await prefs.setBool('tutorialShown', true);
+      if (showTutorial) {
+        Navigator.of(context).push(
+          PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (_, __, ___) => MenuTutorialOverlay(
+              onFinish: () => Navigator.of(context).pop(),
+            ),
           ),
-        ),
-      );
+        );
+      }
     });
   }
 

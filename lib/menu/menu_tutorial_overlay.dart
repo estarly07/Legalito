@@ -93,7 +93,7 @@ class _MenuTutorialOverlayState extends State<MenuTutorialOverlay> {
                   Padding(
                     padding: const EdgeInsets.only(left: 12),
                     child: Image.asset(
-                      'assets/legalito_banner.png',
+                      'assets/legalito_teaching.png',
                       width: 150,
                     ),
                   ),
