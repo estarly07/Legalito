@@ -7,7 +7,6 @@ import 'legalito_game.dart';
 
 class Barrier extends PositionComponent
     with HasGameRef<LegalitoGame>, CollisionCallbacks {
-  static const double speed = 150;
   static const double gapSize = 160;
 
   late RectangleComponent topPipe;
@@ -68,7 +67,7 @@ class Barrier extends PositionComponent
 
     if (!gameRef.isGameStarted || gameRef.isGameOver) return;
 
-    position.x -= speed * dt;
+    position.x -= gameRef.velocidadTuberias * dt;
 
     if (position.x + size.x < 0) {
       removeFromParent();

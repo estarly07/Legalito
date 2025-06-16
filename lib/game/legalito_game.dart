@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -7,8 +9,14 @@ import 'package:legalito/game/background.dart';
 import 'package:legalito/game/bird.dart';
 import 'package:legalito/game/bloc/high_score_bloc.dart';
 import 'package:legalito/game/bloc/high_score_event.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:legalito/game/jefe_component.dart';
+import 'package:legalito/game/models/Jefe.dart';
 import 'barrier.dart';
+
+const double _barrierInterval = 2.5;
+const double _velocityBarriers = 150;
+const velocidadCambio =
+    5.0; // puedes ajustar qué tan rápido cambia la velocidad de los tubos
 
 class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
   late Bird bird;
@@ -16,15 +24,19 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
   final BuildContext context;
   int score = 0;
   double _barrierTimer = 0;
-  final double _barrierInterval =
-      2.5; // Cada 2.5 segundos se genera una nueva barrera
-
   final List<Barrier> passedBarriers = [];
 
   bool isGameStarted = false;
   bool isGameOver = false;
 
-  LegalitoGame({super.children, super.world, super.camera, required this.context});
+  // Jefes
+  JefeComponent? jefeActivo;
+  int puntosInicioJefe = -1;
+  double velocidadTuberias = _velocityBarriers;
+  double targetVelocidadTuberias = _velocityBarriers;
+
+  LegalitoGame(
+      {super.children, super.world, super.camera, required this.context});
 
   @override
   Future<void> onLoad() async {
@@ -64,20 +76,43 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
     add(scoreText);
   }
 
+  void resetJefe() {
+    if (jefeActivo != null) remove(jefeActivo!);
+    jefeActivo = null;
+    targetVelocidadTuberias = _velocityBarriers;
+  }
+
   void increaseScore() {
     score++;
     scoreText.text = score.toString();
+
+    if (jefeActivo != null) {
+      if (score - puntosInicioJefe >= 5) {
+        resetJefe();
+      }
+    } else {
+      if (score % 3 == 0) {
+        final jefe = (jefesDisponibles..shuffle()).first;
+        puntosInicioJefe = score;
+        targetVelocidadTuberias = jefe.velocidadTuberias;
+        jefeActivo = JefeComponent(jefe);
+        add(jefeActivo!);
+      }
+    }
   }
 
   void resetScore() {
     score = 0;
     scoreText.text = '0';
     passedBarriers.clear();
+    jefeActivo = null;
+    velocidadTuberias = _velocityBarriers;
   }
 
   void resetGame() {
     isGameStarted = false;
     isGameOver = false;
+    resetJefe();
     resetScore();
     removeWhere((component) => component is Barrier);
     bird.position = Vector2(100, size.y / 2);
@@ -87,14 +122,27 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
   @override
   void update(double dt) {
     super.update(dt);
-
     if (isGameStarted && !isGameOver) {
+      velocidadTuberias = _interpolate(
+        velocidadTuberias,
+        targetVelocidadTuberias,
+        dt,
+        velocidadCambio,
+      );
+
       _barrierTimer += dt;
       if (_barrierTimer >= _barrierInterval) {
         _barrierTimer = 0;
         spawnBarrier();
       }
     }
+  }
+
+// Método auxiliar de interpolación
+  double _interpolate(double actual, double target, double dt, double factor) {
+    final diff = target - actual;
+    final step = diff * dt * factor;
+    return (diff.abs() < 1.0) ? target : actual + step;
   }
 
   void spawnBarrier() {
@@ -104,15 +152,8 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
 
   void endGame() {
     isGameOver = true;
-
-    // Mostrar botón de reintentar o volver al menú
     overlays.add('gameOver');
     context.read<HighScoreBloc>().add(UpdateHighScore(score));
-    // Detener el loop del juego (opcional si lo necesitas)
-  }
-
-  void stopGame() {
-    pauseEngine();
   }
 
   @override
@@ -120,7 +161,7 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
     super.onTapDown(info);
 
     if (isGameStarted && !isGameOver) {
-      bird.jump(); // 👈 Llama la función jump del pájaro
+      bird.jump();
     }
   }
 }
