@@ -15,6 +15,7 @@ import 'barrier.dart';
 
 const double _barrierInterval = 2.5;
 const double _velocityBarriers = 150;
+const int _intervalBoss = 15;
 const velocidadCambio =
     5.0; // puedes ajustar qué tan rápido cambia la velocidad de los tubos
 
@@ -91,7 +92,7 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
         resetJefe();
       }
     } else {
-      if (score % 3 == 0) {
+      if (score % _intervalBoss == 0) {
         final jefe = (jefesDisponibles..shuffle()).first;
         puntosInicioJefe = score;
         targetVelocidadTuberias = jefe.velocidadTuberias;
