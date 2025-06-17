@@ -25,6 +25,7 @@ class _CountdownOverlayState extends State<CountdownOverlay> {
       if (countdown == 1) {
         timer.cancel();
         widget.game.overlays.remove('countdown');
+        widget.game.activarBackgroundSong();
         widget.game.isGameStarted = true;
       }
       setState(() {

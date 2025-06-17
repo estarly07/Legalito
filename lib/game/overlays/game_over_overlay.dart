@@ -121,6 +121,7 @@ class GameOverOverlay extends StatelessWidget {
           right: 24,
           child: ElevatedButton.icon(
             onPressed: () {
+              game.desactivarBackgroundSong();
               game.overlays.remove('gameOver');
               Navigator.of(context).pop(); // Vuelve a la app
             },

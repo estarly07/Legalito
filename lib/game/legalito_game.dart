@@ -3,14 +3,14 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:legalito/game/audio_manager.dart';
 import 'package:legalito/game/background.dart';
 import 'package:legalito/game/bird.dart';
 import 'package:legalito/game/bloc/high_score_bloc.dart';
 import 'package:legalito/game/bloc/high_score_event.dart';
-import 'package:legalito/game/game_assets.dart';
+import 'package:legalito/game/disco_filter.dart';
 import 'package:legalito/game/jefe_component.dart';
 import 'package:legalito/game/models/Jefe.dart';
 import 'barrier.dart';
@@ -32,12 +32,13 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
   bool isGameStarted = false;
   bool isGameOver = false;
   bool moverseVerticalmente = false;
-  AudioPlayer? _djBossSong = null;
+  final AudioManagerFlame _audioManager = AudioManagerFlame();
   // Jefes
   JefeComponent? jefeActivo;
   int puntosInicioJefe = -1;
   double velocidadTuberias = _velocityBarriers;
   double targetVelocidadTuberias = _velocityBarriers;
+  DiscoFilter? discoFilter = null;
 
   LegalitoGame(
       {super.children, super.world, super.camera, required this.context});
@@ -48,6 +49,12 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
     addBackground();
     addBird();
     await addScoreText();
+  }
+
+  @override
+  void onDispose() {
+    desactivarBackgroundSong();
+    super.onDispose();
   }
 
   void addBackground() {
@@ -84,13 +91,7 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
     if (jefeActivo != null) remove(jefeActivo!);
     jefeActivo = null;
     targetVelocidadTuberias = _velocityBarriers;
-    for (final component in children) {
-      if (component is Barrier) {
-        _djBossSong?.stop(); // Cuando desaparece
-
-        moverseVerticalmente = false;
-      }
-    }
+    desactivarDJMode();
   }
 
   void increaseScore() {
@@ -106,14 +107,7 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
         final jefe = (jefesDisponibles..shuffle()).first;
         puntosInicioJefe = score;
         if (jefe.tipo == JefeTipo.djGrandMom) {
-          FlameAudio.playLongAudio(GameAssets.djSong).then((song) {
-            _djBossSong = song;
-          });
-          for (final component in children) {
-            if (component is Barrier) {
-              moverseVerticalmente = true;
-            }
-          }
+          activarDJMode();
         } else {
           targetVelocidadTuberias = jefe.velocidadTuberias;
         }
@@ -174,6 +168,8 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
 
   void endGame() {
     isGameOver = true;
+    desactivarDJMode();
+    desactivarBackgroundSong();
     overlays.add('gameOver');
     context.read<HighScoreBloc>().add(UpdateHighScore(score));
   }
@@ -185,5 +181,40 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
     if (isGameStarted && !isGameOver) {
       bird.jump();
     }
+  }
+
+  void activarDJMode() {
+    pausarBackgroundSong();
+    _audioManager.playDJ();
+    discoFilter = DiscoFilter(screenSize: size);
+    add(discoFilter!);
+    moverseVerticalmente = true;
+
+    // Aquí puedes reproducir también la música del DJ
+  }
+
+  void desactivarDJMode() {
+    discoFilter?.removeFromParent();
+    _audioManager.stopDJ();
+    moverseVerticalmente = false;
+    reaundarBackgroundSong();
+    // Y detener la música
+  }
+
+  void activarBackgroundSong() {
+    _audioManager.playBackground();
+  }
+
+  void desactivarBackgroundSong() {
+    _audioManager.stopBackground();
+    _audioManager.stopDJ();
+  }
+
+  void pausarBackgroundSong() {
+    _audioManager.pausarBackgroundSong();
+  }
+
+  void reaundarBackgroundSong() {
+    _audioManager.reaundarBackgroundSong();
   }
 }
