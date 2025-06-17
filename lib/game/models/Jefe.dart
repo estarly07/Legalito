@@ -1,6 +1,6 @@
 import 'package:legalito/game/game_assets.dart';
 
-enum JefeTipo { ladronNero, jefePrisas }
+enum JefeTipo { ladronNero, jefePrisas, djGrandMom }
 
 class Jefe {
   final JefeTipo tipo;
@@ -28,5 +28,11 @@ final List<Jefe> jefesDisponibles = [
     frase: '¡Eso es pa’ ayer!',
     assetImage: GameAssets.enemyEmployer,
     velocidadTuberias: 250.0, // más rápido
+  ),
+  Jefe(
+    tipo: JefeTipo.djGrandMom,
+    frase: '¡El que no salte es tombo!',
+    assetImage: GameAssets.enemyDjGrandma,
+    velocidadTuberias: 0.0,
   ),
 ];

@@ -3,12 +3,14 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:legalito/game/background.dart';
 import 'package:legalito/game/bird.dart';
 import 'package:legalito/game/bloc/high_score_bloc.dart';
 import 'package:legalito/game/bloc/high_score_event.dart';
+import 'package:legalito/game/game_assets.dart';
 import 'package:legalito/game/jefe_component.dart';
 import 'package:legalito/game/models/Jefe.dart';
 import 'barrier.dart';
@@ -29,7 +31,8 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
 
   bool isGameStarted = false;
   bool isGameOver = false;
-
+  bool moverseVerticalmente = false;
+  AudioPlayer? _djBossSong = null;
   // Jefes
   JefeComponent? jefeActivo;
   int puntosInicioJefe = -1;
@@ -81,6 +84,13 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
     if (jefeActivo != null) remove(jefeActivo!);
     jefeActivo = null;
     targetVelocidadTuberias = _velocityBarriers;
+    for (final component in children) {
+      if (component is Barrier) {
+        _djBossSong?.stop(); // Cuando desaparece
+
+        moverseVerticalmente = false;
+      }
+    }
   }
 
   void increaseScore() {
@@ -95,7 +105,18 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
       if (score % _intervalBoss == 0) {
         final jefe = (jefesDisponibles..shuffle()).first;
         puntosInicioJefe = score;
-        targetVelocidadTuberias = jefe.velocidadTuberias;
+        if (jefe.tipo == JefeTipo.djGrandMom) {
+          FlameAudio.playLongAudio(GameAssets.djSong).then((song) {
+            _djBossSong = song;
+          });
+          for (final component in children) {
+            if (component is Barrier) {
+              moverseVerticalmente = true;
+            }
+          }
+        } else {
+          targetVelocidadTuberias = jefe.velocidadTuberias;
+        }
         jefeActivo = JefeComponent(jefe);
         add(jefeActivo!);
       }

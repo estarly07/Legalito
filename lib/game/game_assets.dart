@@ -12,6 +12,7 @@ class GameAssets {
 
   static const String enemyNero = 'enemy_nero.png';
   static const String enemyEmployer = 'enemy_employer.png';
+  static const String enemyDjGrandma = 'dj_grandma.png';
 
   // Barreras (pipes)
   static const String pipeTop = 'barrier_top.png';
@@ -26,4 +27,5 @@ class GameAssets {
   static const String flapSound = 'fly.mp3';
   static const String hitSound = 'fly.mp3';
   static const String scoreSound = 'fly.mp3';
+  static const String djSong = 'dj_song.mp3';
 }
