@@ -4,6 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:legalito/menu/bloc/menu_bloc.dart';
 import 'package:legalito/menu/bloc/menu_event.dart';
 import 'package:legalito/menu/bloc/menu_state.dart';
+import 'package:legalito/menu/guide/bloc/guide_bloc.dart';
+import 'package:legalito/menu/guide/guide.dart';
+import 'package:legalito/menu/guide/guide_screen.dart';
+import 'package:legalito/menu/guide/problem_carousel.dart';
 import 'package:legalito/menu/menu_tutorial_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -63,17 +67,21 @@ class _MenuScreenState extends State<MenuScreen> {
     return Scaffold(
       backgroundColor: Color(0xFFF8F8F8),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 1. Texto saludo
-              _Title(),
-              SizedBox(height: 50),
+        child: ListView(
+          /* crossAxisAlignment: CrossAxisAlignment.start, */
+          children: [
+            // 1. Texto saludo
+            SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _Title(),
+            ),
+            SizedBox(height: 50),
 
-              // 2. Banner con consejo y legalito
-              Stack(
+            // 2. Banner con consejo y legalito
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Stack(
                 clipBehavior: Clip.none,
                 children: [
                   Container(
@@ -160,11 +168,14 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                 ],
               ),
+            ),
 
-              SizedBox(height: 32),
+            SizedBox(height: 32),
 
-              // 3. Dos tarjetas en Row sin sombra, pastel naranja y verde
-              Row(
+            // 3. Dos tarjetas en Row sin sombra, pastel naranja y verde
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
                 children: [
                   Expanded(
                     child: _buildFlatCard(
@@ -188,11 +199,14 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                 ],
               ),
+            ),
 
-              SizedBox(height: 30),
+            SizedBox(height: 30),
 
-              // 4. Tarjeta de documentos con sombra tipo buscador
-              GestureDetector(
+            // 4. Tarjeta de documentos con sombra tipo buscador
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: GestureDetector(
                 key: GlobalObjectKey('documentos'),
                 onTap: () => Navigator.pushNamed(context, '/documentos'),
                 child: Container(
@@ -237,8 +251,12 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+            SizedBox(height: 30), // Add some spacing
+            // Horizontal list of cards (carousel effect)
+            ProblemCarouselPageView(guides: guides),
+            SizedBox(height: 30),
+          ],
         ),
       ),
     );
