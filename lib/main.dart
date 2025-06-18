@@ -54,8 +54,7 @@ class MyApp extends StatelessWidget {
             routes: {
               '/bienvenida': (context) => const WelcomeScreen(),
               '/menu': (context) => BlocProvider(
-                    create: (context) =>
-                        MenuBloc() /* ..add(FetchLegalTipsEvent()) */,
+                    create: (context) => MenuBloc()..add(FetchLegalTipsEvent()),
                     child: MenuScreen(),
                   ),
               '/suvey_document': (context) => SurveyScreen(),
