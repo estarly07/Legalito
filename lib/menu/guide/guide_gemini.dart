@@ -1,6 +1,6 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:legalito/core/gemini.dart';
-import 'package:flutter/material.dart'; // Import for TextSpan and TextStyle
+import 'package:flutter/material.dart';
 
 class FormattedStep {
   final String rawText;
@@ -14,7 +14,7 @@ class GuideGemini {
 
   GuideGemini()
       : _model = GenerativeModel(
-          model: modelGemini, // Usa tu modelo Gemini
+          model: modelGemini,
           apiKey: apikeyGemini,
         );
 
@@ -22,35 +22,33 @@ class GuideGemini {
       String problemDescription) async {
     try {
       final prompt = '''
-Actúa como **Legalito**, un abogado colombiano súper buena onda y experto en resolver problemas legales y cotidianos en Colombia. Tu misión es ayudar a cualquier persona a entender qué hacer paso a paso, como si se lo explicaras a tu tía o a un amigo que no sabe nada de leyes.
+Actúa como **Legalito**, un abogado colombiano muy buena onda que ayuda a resolver problemas legales y cotidianos de forma clara, chistosa y paso a paso.
 
-Dado el siguiente problema, entrega una **guía paso a paso muy detallada** para resolverlo. Cada paso debe ser **claro, secuencial y completamente explicado**. No solo digas qué hacer, sino también **cómo hacerlo, dónde hacerlo, qué documentos necesita, a qué lugar debe acudir, cuánto puede demorar, y por qué se hace cada paso.** Usa ejemplos prácticos, consejos útiles y un lenguaje cercano, profesional pero simpático.
+Dado un problema que te diré, quiero que generes una lista de posibles **acciones o tareas** que el usuario puede hacer para solucionarlo. Cada acción debe ser un paso que se pueda intentar, en orden de menor a mayor complejidad.
 
-### 🔖 Reglas importantes:
-- Cada paso debe estar **separado por la línea: `--- PASO ---`**. Ese será el delimitador entre pasos.
-- Usa **formato markdown** para títulos, subtítulos y negrillas:
-  - Título general: `##`
-  - Subtítulo (si aplica): `###`
-  - Negritas: `**texto**`
-- Usa un tono amistoso, claro y con toques de humor colombiano.
-- No incluyas pasos vacíos ni vagos como “puedes demandar”. Mejor explícalo: “Debes ir a la Superintendencia de Industria... con este documento... y pedir esto...”.
+Por cada paso:
+- Explica qué debe hacer el usuario.
+- Si aplica y si se puede, da un ejemplo realista de lo que podría decir o hacer.
+- Sé empático y usa frases amigables, como si hablaras con una persona común.
+- El paso debe ser claro, específico, y debe tener sentido por sí mismo. Si ese paso resuelve el problema, el usuario debe poder marcarlo como solucionado.
+- Usa frases divertidas o cercanas cuando sea posible, que representen a un abogado colombiano bacano.
+- Usa formato **markdown** para destacar con negrillas.
 
----
+⚠️ Separa cada paso usando el símbolo: ###
 
-Problema del usuario: "$problemDescription"
+Problema: $problemDescription
 
----
-
-Ahora sí, Legalito, danos la guía completica, paso a paso, con toda la actitud. 🎓💼📄
+Responde solamente con los pasos separados por ### como lo indiqué.
 ''';
 
       final content = [Content.text(prompt)];
       final response = await _model.generateContent(content);
 
       final text = response.text;
-      if (text != null) {
+
+      if (text != null && text.trim().isNotEmpty) {
         final rawSteps = text
-            .split('--- PASO ---')
+            .split('###')
             .map((s) => s.trim())
             .where((s) => s.isNotEmpty)
             .toList();
@@ -60,7 +58,15 @@ Ahora sí, Legalito, danos la guía completica, paso a paso, con toda la actitud
 
         return formattedSteps;
       } else {
-        return [];
+        return [
+          FormattedStep(
+            'No se encontraron pasos. Intenta con otro problema.',
+            [
+              TextSpan(
+                  text: 'No se encontraron pasos. Intenta con otro problema.')
+            ],
+          )
+        ];
       }
     } catch (e) {
       print('Error generating solution steps: $e');
@@ -82,19 +88,22 @@ Ahora sí, Legalito, danos la guía completica, paso a paso, con toda la actitud
     final lines = text.split('\n');
 
     for (var line in lines) {
-      if (line.trim().startsWith('## ')) {
+      final trimmed = line.trim();
+
+      if (trimmed.startsWith('## ')) {
+        // Título
         textSpans.add(TextSpan(
-          text: line.trim().substring(3) + '\n',
+          text: trimmed.substring(3) + '\n',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ));
-      } else if (line.trim().startsWith('### ')) {
+      } else if (trimmed.startsWith('### ')) {
+        // Subtítulo
         textSpans.add(TextSpan(
-          text: line.trim().substring(4) + '\n',
+          text: trimmed.substring(4) + '\n',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ));
       } else {
-        // Manejo de negrillas **texto**
-        final boldRegex = RegExp(r'\*\*(.*?)\*\*');
+        final boldRegex = RegExp(r'(\*\*[^*]+\*\*|\*[^*]+\*)');
         final matches = boldRegex.allMatches(line);
 
         int lastMatchEnd = 0;
@@ -103,13 +112,23 @@ Ahora sí, Legalito, danos la guía completica, paso a paso, con toda la actitud
             textSpans
                 .add(TextSpan(text: line.substring(lastMatchEnd, match.start)));
           }
+
+          final matchedText = match.group(0)!;
+
+          // Detecta si es ** o *
+          final isDouble = matchedText.startsWith('**');
+          final cleaned = matchedText.substring(
+              isDouble ? 2 : 1, matchedText.length - (isDouble ? 2 : 1));
+
           textSpans.add(TextSpan(
-            text: match.group(1),
+            text: cleaned,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ));
+
           lastMatchEnd = match.end;
         }
 
+// Agrega el resto del texto normal si hay algo después del último match
         if (lastMatchEnd < line.length) {
           textSpans.add(TextSpan(text: line.substring(lastMatchEnd)));
         }

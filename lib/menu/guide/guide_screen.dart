@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:legalito/menu/guide/bloc/guide_bloc.dart';
 
+// ... imports (no cambian)
+
 class GuideScreen extends StatefulWidget {
   final String title;
   const GuideScreen({super.key, required this.title});
@@ -51,6 +53,10 @@ class _GuideScreenState extends State<GuideScreen> {
     }
   }
 
+  void _completeGuide() {
+    Navigator.pop(context);
+  }
+
   @override
   void dispose() {
     _legalitoTimer.cancel();
@@ -92,7 +98,7 @@ class _GuideScreenState extends State<GuideScreen> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
                     onTap: () {
-                      Navigator.pop(context); // Regresa a la pantalla anterior
+                      Navigator.pop(context);
                     },
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
@@ -109,7 +115,7 @@ class _GuideScreenState extends State<GuideScreen> {
                   child: Text(
                     widget.title,
                     maxLines: 2,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
                       fontSize: 20,
@@ -137,7 +143,7 @@ class _GuideScreenState extends State<GuideScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      // Circles
+                      // Progress circles
                       SizedBox(
                         height: 60,
                         child: ListView.separated(
@@ -205,15 +211,21 @@ class _GuideScreenState extends State<GuideScreen> {
                           shadowColor: Colors.black.withOpacity(0.1),
                           color: Colors.white,
                           child: Padding(
-                            padding: const EdgeInsets.all(20.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
                             child: SingleChildScrollView(
-                              child: RichText(
-                                text: TextSpan(
-                                  children: steps[_currentStepIndex].textSpans,
-                                  style: const TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 16,
-                                    height: 1.4,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 20.0),
+                                child: RichText(
+                                  text: TextSpan(
+                                    children:
+                                        steps[_currentStepIndex].textSpans,
+                                    style: const TextStyle(
+                                      color: Colors.black87,
+                                      fontSize: 16,
+                                      height: 1.4,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -221,47 +233,63 @@ class _GuideScreenState extends State<GuideScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 16),
 
-                      // Navigation button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 55,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (_currentStepIndex < steps.length - 1) {
-                              _goToNextStep();
-                            } else {
-                              Navigator.pop(context);
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            elevation: 6,
-                            shadowColor: primaryColor.withOpacity(0.3),
-                          ),
-                          child: Text(
-                            _currentStepIndex < steps.length - 1
-                                ? 'Siguiente paso'
-                                : 'Finalizar guía',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                      // Buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: _completeGuide,
+                              icon: const Icon(Icons.check_circle_outline),
+                              label: const Text('Problema solucionado'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange,
+                                foregroundColor: Colors.white,
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                if (_currentStepIndex < steps.length - 1) {
+                                  _goToNextStep();
+                                } else {
+                                  _completeGuide();
+                                }
+                              },
+                              icon: const Icon(Icons.navigate_next),
+                              label: Text(
+                                _currentStepIndex < steps.length - 1
+                                    ? 'Siguiente paso'
+                                    : 'Finalizar',
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                foregroundColor: Colors.white,
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
 
-                // 👨‍⚖️ Legalito avatar en la esquina inferior izquierda
+                // Legalito animado
                 Positioned(
-                  bottom: 20,
-                  right: 10,
+                  bottom: 10,
+                  left: 0,
+                  right: 0,
                   child: Column(
                     children: [
                       Container(
@@ -279,11 +307,12 @@ class _GuideScreenState extends State<GuideScreen> {
                           ],
                         ),
                         child: const Text(
-                          '¡Vamos bien! ✨',
+                          '¿Te sirvió este paso?',
                           style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                              color: Colors.black87),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
                         ),
                       ),
                       Image.asset(
