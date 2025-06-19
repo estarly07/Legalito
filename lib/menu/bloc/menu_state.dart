@@ -1,3 +1,5 @@
+import 'package:legalito/menu/guide/guide.dart';
+
 sealed class MenuState {
   const MenuState();
 
@@ -11,11 +13,12 @@ class MenuLoading extends MenuState {}
 
 class MenuLoaded extends MenuState {
   final List<String> legalTips;
+  final List<Guide> guides; // Added list of Guide objects
 
-  const MenuLoaded({required this.legalTips});
-
-  @override
-  List<Object> get props => [legalTips];
+  MenuLoaded({
+    required this.legalTips,
+    required this.guides,
+  }); // Updated constructor
 }
 
 class MenuLogoutSuccess extends MenuState {}

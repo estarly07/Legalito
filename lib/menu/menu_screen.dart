@@ -20,6 +20,7 @@ class _MenuScreenState extends State<MenuScreen> {
   List<String> _phrases = [
     "Evita prestar tu nombre para abrir cuentas bancarias",
   ];
+  List<Guide> guides = Guide.guides;
 
   int _currentPhraseIndex = 0;
   late Timer _timer;
@@ -61,8 +62,11 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     final blocState = context.read<MenuBloc>().state;
-    if (blocState is MenuLoaded && blocState.legalTips.isNotEmpty) {
-      _phrases = blocState.legalTips;
+    if (blocState is MenuLoaded) {
+      if (blocState.legalTips.isNotEmpty) {
+        _phrases = blocState.legalTips;
+      }
+      guides.addAll(blocState.guides);
     }
     return Scaffold(
       backgroundColor: Color(0xFFF8F8F8),
