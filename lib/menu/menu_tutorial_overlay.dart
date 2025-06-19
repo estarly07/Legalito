@@ -38,6 +38,13 @@ class _MenuTutorialOverlayState extends State<MenuTutorialOverlay> {
       alignment: Alignment.centerLeft,
     ),
     _TutorialStep(
+      showBottom: false,
+      description:
+          'Aquí puedes ver los problemas más comunes y sus posibles soluciones.',
+      highlightKey: GlobalObjectKey('problemas'),
+      alignment: Alignment.centerLeft,
+    ),
+    _TutorialStep(
       showBottom: true,
       description:
           '¿Necesitas distraerte? Da doble tap en este banner\ny descubre una forma divertida\nde distraerte con Legalito.',

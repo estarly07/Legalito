@@ -20,7 +20,7 @@ class _MenuScreenState extends State<MenuScreen> {
   List<String> _phrases = [
     "Evita prestar tu nombre para abrir cuentas bancarias",
   ];
-  List<Guide> guides = Guide.guides;
+  List<Guide> guides = Guide.guides.toList();
 
   int _currentPhraseIndex = 0;
   late Timer _timer;
@@ -66,7 +66,9 @@ class _MenuScreenState extends State<MenuScreen> {
       if (blocState.legalTips.isNotEmpty) {
         _phrases = blocState.legalTips;
       }
-      guides.addAll(blocState.guides);
+      if (guides.length == Guide.guides.length) {
+        guides.addAll(blocState.guides);
+      }
     }
     return Scaffold(
       backgroundColor: Color(0xFFF8F8F8),
@@ -258,7 +260,21 @@ class _MenuScreenState extends State<MenuScreen> {
             ),
             SizedBox(height: 30), // Add some spacing
             // Horizontal list of cards (carousel effect)
-            ProblemCarouselPageView(guides: guides),
+            Stack(
+              children: [
+                ProblemCarouselPageView(
+                  guides: guides,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: SizedBox(
+                    key: GlobalObjectKey('problemas'),
+                    height: 150,
+                    width: MediaQuery.sizeOf(context).width,
+                  ),
+                )
+              ],
+            ),
             SizedBox(height: 30),
           ],
         ),

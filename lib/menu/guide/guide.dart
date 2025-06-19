@@ -11,17 +11,20 @@ class Guide {
   }
   static final guides = [
     Guide(
-        image: "assets/problem_one.png",
+        image:
+            "https://drive.google.com/uc?export=view&id=190QI4F_GTuhUtkh2SnvrQsCvrr2Ll5Wp",
         title: "Compre algo por internet y nunca llegó."),
     Guide(
-        image: "assets/problem_two.png",
+        image:
+            "https://drive.google.com/uc?export=view&id=1c9Gb7uHLaK30aw0vVJxH8jXNHQpya9MR",
         title: "Compre algo con garantia y no quieren responder."),
     Guide(
-        image: "assets/problem_three.png",
+        image:
+            "https://drive.google.com/uc?export=view&id=1oRyE-1t3OZu2gyR66m4YESONrixlMVIv",
         title: "Me despidieron sin justa causa."),
     Guide(
-        image: "assets/problem_four.png",
+        image:
+            "https://drive.google.com/uc?export=view&id=1ndKKDAoap1tP2j8sSViJg2udTNi4xntO",
         title: "Tengo unos inquilinos que no pagan y no se van."),
   ];
 }
-

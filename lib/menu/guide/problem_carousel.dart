@@ -26,15 +26,12 @@ class _ProblemCarouselPageViewState extends State<ProblemCarouselPageView> {
   }
 
   void _startAutoScroll() {
-    _autoScrollTimer = Timer.periodic(Duration(seconds: 4), (_) {
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 4), (_) {
       if (_pageController.hasClients) {
-        _currentIndex++;
-        if (_currentIndex >= widget.guides.length) {
-          _currentIndex = 0;
-        }
+        _currentIndex = (_currentIndex + 1) % widget.guides.length;
         _pageController.animateToPage(
           _currentIndex,
-          duration: Duration(milliseconds: 600),
+          duration: const Duration(milliseconds: 600),
           curve: Curves.easeInOut,
         );
       }
@@ -83,8 +80,7 @@ class _ProblemCarouselPageViewState extends State<ProblemCarouselPageView> {
                 return Transform.scale(
                   scale: scale,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8), // espacio entre items
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Stack(
                       children: [
                         Container(
@@ -94,17 +90,35 @@ class _ProblemCarouselPageViewState extends State<ProblemCarouselPageView> {
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.25),
                                 blurRadius: 10,
-                                offset: Offset(0, 6),
+                                offset: const Offset(0, 6),
                               ),
                             ],
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20),
-                            child: Image.asset(
+                            child: Image.network(
                               guide.image,
                               width: double.infinity,
                               height: double.infinity,
                               fit: BoxFit.cover,
+                              loadingBuilder: (context, child, progress) {
+                                if (progress == null) return child;
+                                return Container(
+                                  color: Colors.grey[200],
+                                  child: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  color: Colors.grey[200],
+                                  child: const Center(
+                                    child: Icon(Icons.broken_image,
+                                        size: 40, color: Colors.grey),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),
@@ -116,7 +130,7 @@ class _ProblemCarouselPageViewState extends State<ProblemCarouselPageView> {
                             height: 60,
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.vertical(
+                              borderRadius: const BorderRadius.vertical(
                                   bottom: Radius.circular(20)),
                               gradient: LinearGradient(
                                 colors: [
@@ -129,7 +143,7 @@ class _ProblemCarouselPageViewState extends State<ProblemCarouselPageView> {
                             ),
                             child: Text(
                               guide.title,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
