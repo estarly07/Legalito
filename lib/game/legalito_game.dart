@@ -32,7 +32,7 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
   bool isGameStarted = false;
   bool isGameOver = false;
   bool moverseVerticalmente = false;
-  final AudioManagerFlame _audioManager = AudioManagerFlame();
+  late final AudioManagerFlame _audioManager;
   // Jefes
   JefeComponent? jefeActivo;
   int puntosInicioJefe = -1;
@@ -46,6 +46,8 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    _audioManager = AudioManagerFlame();
+    await _audioManager.init(); // Precarga canciones
     addBackground();
     addBird();
     await addScoreText();
@@ -91,6 +93,7 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
     if (jefeActivo != null) remove(jefeActivo!);
     jefeActivo = null;
     targetVelocidadTuberias = _velocityBarriers;
+    _audioManager.setBackgroundPlaybackRate(1.0);
     desactivarDJMode();
   }
 
@@ -106,9 +109,18 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
       if (score % _intervalBoss == 0) {
         final jefe = (jefesDisponibles..shuffle()).first;
         puntosInicioJefe = score;
-        if (jefe.tipo == JefeTipo.djGrandMom) {
-          activarDJMode();
-        } else {
+        switch (jefe.tipo) {
+          case JefeTipo.djGrandMom:
+            activarDJMode();
+            break;
+          case JefeTipo.jefePrisas:
+            _audioManager.setBackgroundPlaybackRate(1.25);
+            break;
+          case JefeTipo.ladronNero:
+            _audioManager.setBackgroundPlaybackRate(0.75);
+            break;
+        }
+        if (jefe.tipo != JefeTipo.djGrandMom) {
           targetVelocidadTuberias = jefe.velocidadTuberias;
         }
         jefeActivo = JefeComponent(jefe);

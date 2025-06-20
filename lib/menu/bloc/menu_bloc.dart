@@ -21,7 +21,13 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     List<String> legalTips = [];
     List<Guide> guides = [];
     try {
-      emit(MenuLoading());
+      guides = await GuideService().fetchProblems();
+      emit(MenuLoaded(
+        legalTips: legalTips,
+        guides: guides,
+      ));
+    } catch (e) {}
+    try {
       legalTips = await fetchLegalTips();
       emit(MenuLoaded(legalTips: legalTips, guides: guides));
     } catch (e) {
@@ -30,13 +36,6 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       print('Error fetching legal tips: $e');
     }
     // Independently fetch problems (guides)
-    try {
-      guides = await GuideService().fetchProblems();
-      emit(MenuLoaded(
-        legalTips: legalTips,
-        guides: guides,
-      ));
-    } catch (e) {}
   }
 
   Future<void> _onLogout(

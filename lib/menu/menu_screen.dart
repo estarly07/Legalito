@@ -63,11 +63,11 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget build(BuildContext context) {
     final blocState = context.read<MenuBloc>().state;
     if (blocState is MenuLoaded) {
-      if (blocState.legalTips.isNotEmpty) {
-        _phrases = blocState.legalTips;
-      }
       if (guides.length == Guide.guides.length) {
         guides.addAll(blocState.guides);
+      }
+      if (blocState.legalTips.isNotEmpty) {
+        _phrases = blocState.legalTips;
       }
     }
     return Scaffold(
