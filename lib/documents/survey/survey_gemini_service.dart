@@ -15,14 +15,35 @@ class SurveyGeminiService {
   ) async {
     try {
       final prompt = """
-      Genera un arreglo JSON que contenga los campos necesarios para un formulario titulado "$documentName".
-      Cada objeto dentro del arreglo debe incluir las siguientes claves:
-      "label": una cadena de texto con el nombre visible del campo.
-      "type": una cadena que indique el tipo de dato (por ejemplo: "text", "number", "date", "boolean").
-      "required": un valor booleano que indique si el campo es obligatorio.
-      "key": una cadena única que sirva como identificador del campo.
-      Asegúrate de incluir al menos 3 campos distintos y de que la salida sea un JSON válido.
-      """;
+Actúa como un generador de formularios inteligentes.
+
+Tu tarea es crear un arreglo JSON que contenga la estructura necesaria para completar un documento de :"$documentName".
+
+Sigue estas instrucciones:
+
+1. Genera todos los campos necesarios para el contenido del documento, dependiendo del título.
+2. Cada campo debe incluir estas claves:
+   - "label": el texto visible que explica qué debe ingresar el usuario.
+   - "type": el tipo de campo (usa uno de estos: "text", "number", "date", "boolean", "select").
+   - "required": true o false, según la necesidad legal del dato.
+   - "key": un identificador único en snake_case.
+3. Si el campo tiene "type": "select", agrega una clave adicional llamada "options" con un arreglo de opciones que el usuario puede elegir.
+4. Sé claro y preciso. Si el documento requiere datos personales (nombre, documento, fecha, dirección, género, etc.), inclúyelos.
+5. Devuelve únicamente el arreglo JSON. No incluyas explicaciones ni comentarios.
+
+Ejemplo de un campo con tipo select:
+
+{
+  "label": "Género",
+  "type": "select",
+  "required": true,
+  "key": "genero",
+  "options": ["Masculino", "Femenino", "Otro"]
+}
+
+Recuerda: solo devuelve el arreglo JSON. Nada más.
+""";
+
       final content = [Content.text(prompt)];
       final response = await _model.generateContent(content);
 
@@ -49,18 +70,32 @@ class SurveyGeminiService {
   ) async {
     try {
       final prompt = '''
-Genera el contenido para un documento titulado "$documentName" utilizando la siguiente información en formato JSON:
+Actúa como un redactor legal profesional colombiano.
 
+Tu tarea es redactar el contenido de un documento de tipo "$documentName".
+
+Usa esta información en formato JSON para completarlo:
 ${json.encode(answers)}
 
-El documento debe tener un estilo profesional, incluyendo:
-- Títulos y subtítulos en negrilla si corresponde
-- Saltos de línea apropiados para separar secciones
-- Palabras o frases clave también en negrilla si son importantes
-- Redacción formal y coherente
-- No uses formato markdown ni HTML, solo texto plano estructurado
+Sigue estas instrucciones con precisión:
 
-Devuelve únicamente el texto generado, sin ningún encabezado adicional o explicación.
+1. El contenido debe estar en **texto plano** (sin HTML, sin markdown).
+2. Usa una **estructura clara y profesional**:
+   - TÍTULOS PRINCIPALES: en mayúsculas y con salto de línea antes y después.
+   - Subtítulos o secciones: con dos puntos (:) al final si aplica.
+   - Cada párrafo debe estar separado por una línea en blanco.
+3. Redacta con lenguaje formal, claro y coherente.
+4. Resalta **elementos clave** como nombres, fechas o cláusulas usando mayúsculas.
+5. Si el documento lo requiere, incluye al final líneas de firma como:
+   Firma del cliente: ________________________
+   Firma del representante: __________________
+
+Importante:
+- El texto debe ser 100% plano, sin asteriscos (*), guiones (-), numeraciones, ni símbolos decorativos.
+- No agregues comentarios explicativos ni texto fuera del documento.
+- Redacta como si fuera un contrato, carta legal o acta notarial profesional.
+
+Devuelve únicamente el contenido del documento estructurado, sin introducción, sin explicación.
 ''';
 
       final content = [Content.text(prompt)];
@@ -74,7 +109,7 @@ Devuelve únicamente el texto generado, sin ningún encabezado adicional o expli
       return response.text!.trim();
     } catch (e) {
       print('Error generating document content: $e');
-      rethrow; // Re-throw the exception
+      rethrow;
     }
   }
 }

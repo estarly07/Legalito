@@ -45,56 +45,93 @@ class SurveyFormBloc extends Bloc<SurveyFormEvent, SurveyFormState> {
     emit(SurveyFormLoading());
 
     try {
-      // 1. Obtener el contenido desde Gemini
-      final documentContent = await _surveyGeminiService
-          .generateDocumentContent(event.documentName, event.answers);
+      final documentContent =
+          await _surveyGeminiService.generateDocumentContent(
+        event.documentName,
+        event.answers,
+      );
 
-      // 2. Crear documento PDF
       final PdfDocument document = PdfDocument();
       PdfPage page = document.pages.add();
 
-      final lines = documentContent.split('\n');
       final regularFont = PdfStandardFont(PdfFontFamily.helvetica, 12);
-      final boldFont = PdfStandardFont(PdfFontFamily.helvetica, 12,
+      final boldFont = PdfStandardFont(PdfFontFamily.helvetica, 14,
+          style: PdfFontStyle.bold);
+      final titleFont = PdfStandardFont(PdfFontFamily.helvetica, 18,
           style: PdfFontStyle.bold);
 
+      PdfGraphics graphics = page.graphics;
+      Size pageSize = page.getClientSize();
+
       double y = 0;
+      final double margin = 20;
+      final double contentWidth = pageSize.width - margin * 2;
+
+      final lines = documentContent.split('\n');
 
       for (String line in lines) {
-        if (line.trim().isEmpty) {
-          y += 15;
+        final trimmed = line.trim();
+        if (trimmed.isEmpty) {
+          y += 10;
           continue;
         }
 
-        final isBold = line.trim() == line.trim().toUpperCase() ||
-            line.trim().startsWith('*');
-        final cleanedLine = line.replaceAll('*', '').trim();
-        final font = isBold ? boldFont : regularFont;
+        // Detectar firma
+        if (trimmed.toLowerCase().startsWith('firma')) {
+          final signatureLabel = trimmed;
+          final element = PdfTextElement(text: signatureLabel, font: boldFont);
+          final result = element.draw(
+            page: page,
+            bounds: Rect.fromLTWH(margin, y, contentWidth, double.infinity),
+          )!;
+          y = result.bounds.bottom + 10;
 
-        page.graphics.drawString(
-          cleanedLine,
-          font,
-          bounds: Rect.fromLTWH(0, y, page.getClientSize().width, 20),
-        );
+          // Línea punteada
+          graphics.drawLine(
+            PdfPen(PdfColor(0, 0, 0), dashStyle: PdfDashStyle.dash),
+            Offset(margin, y),
+            Offset(margin + contentWidth / 2, y),
+          );
+          y += 30;
+          continue;
+        }
 
-        y += 20;
+        // Detectar título o subtítulo
+        final isTitle = trimmed == trimmed.toUpperCase() && trimmed.length > 5;
+        final isSubTitle =
+            trimmed.endsWith(':') || trimmed.split(' ').length <= 4;
 
-        // Nueva página si se llena
-        if (y > page.getClientSize().height - 40) {
+        final font = isTitle
+            ? titleFont
+            : isSubTitle
+                ? boldFont
+                : regularFont;
+
+        final element = PdfTextElement(text: trimmed, font: font);
+
+        final result = element.draw(
+          page: page,
+          bounds: Rect.fromLTWH(margin, y, contentWidth, double.infinity),
+        )!;
+
+        y = result.bounds.bottom + 10;
+
+        // Nueva página si es necesario
+        if (y > pageSize.height - 60) {
           page = document.pages.add();
+          graphics = page.graphics;
           y = 0;
         }
       }
 
-      // 3. Guardar el PDF
+      // Guardar PDF
       final directory = Directory(event.savePath);
       await directory.create(recursive: true);
 
       final filePath = '${directory.path}/${event.documentName}.pdf';
       final file = File(filePath);
-      final List<int> bytes = await document.save();
+      final bytes = await document.save();
       await file.writeAsBytes(bytes);
-
       document.dispose();
 
       emit(SurveyFormGenerated(filePath));

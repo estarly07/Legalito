@@ -1,27 +1,33 @@
 class FormFieldModel {
-  final String type;
   final String label;
-  final List<String>? options;
+  final String key;
+  final String type;
+  final bool required;
+  String? value;
   String? selectedValue;
   bool? checked;
-  String? value;
+  DateTime? dateValue;
+  List<String>? options;
 
   FormFieldModel({
-    required this.type,
     required this.label,
-    this.options,
+    required this.key,
+    required this.type,
+    required this.required,
+    this.value,
     this.selectedValue,
     this.checked,
-    this.value,
+    this.dateValue,
+    this.options,
   });
 
   factory FormFieldModel.fromJson(Map<String, dynamic> json) {
     return FormFieldModel(
-      type: json['type'],
       label: json['label'],
+      key: json['key'],
+      type: json['type'],
+      required: json['required'],
       options: (json['options'] as List?)?.cast<String>(),
-      selectedValue: json['selectedValue'],
-      checked: json['checked'],
     );
   }
 }

@@ -152,17 +152,59 @@ class _SurveyFormBuilderState extends State<_SurveyFormBuilder> {
   Widget _buildFormField(FormFieldModel field) {
     switch (field.type) {
       case 'text':
-        final controller = controllers[field.label] ??= TextEditingController();
+      case 'number':
+        final controller = controllers[field.key] ??= TextEditingController();
         return _styledContainer(
           child: TextFormField(
             controller: controller,
+            keyboardType: field.type == 'number'
+                ? TextInputType.number
+                : TextInputType.text,
             decoration: InputDecoration(
               labelText: field.label,
               border: InputBorder.none,
             ),
           ),
         );
-      case 'dropdown':
+
+      case 'date':
+        return StatefulBuilder(
+          builder: (context, setState) {
+            DateTime? selectedDate = field.dateValue;
+
+            return _styledContainer(
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  field.label,
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                ),
+                subtitle: Text(
+                  selectedDate != null
+                      ? "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}"
+                      : 'Selecciona una fecha',
+                ),
+                trailing: Icon(Icons.calendar_today),
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: selectedDate ?? DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime(2100),
+                  );
+                  if (picked != null) {
+                    setState(() {
+                      field.dateValue = picked;
+                    });
+                  }
+                },
+              ),
+            );
+          },
+        );
+
+      case 'select':
+      case 'dropdown': // En caso Gemini envíe 'dropdown'
         String? selected = field.selectedValue;
         return StatefulBuilder(
           builder: (context, setState) {
@@ -187,7 +229,9 @@ class _SurveyFormBuilderState extends State<_SurveyFormBuilder> {
             );
           },
         );
-      case 'checkbox':
+
+      case 'boolean':
+      case 'checkbox': // Soporte alternativo
         bool checked = field.checked ?? false;
         return StatefulBuilder(
           builder: (context, setState) {
@@ -207,6 +251,7 @@ class _SurveyFormBuilderState extends State<_SurveyFormBuilder> {
             );
           },
         );
+
       default:
         return SizedBox.shrink();
     }
@@ -242,14 +287,19 @@ class _SurveyFormBuilderState extends State<_SurveyFormBuilder> {
       }
 
       for (final field in widget.formFields) {
-        if (field.type == 'text') {
-          field.value = controllers[field.label]?.text ?? '';
+        if (field.type == 'text' || field.type == 'number') {
+          field.value = controllers[field.key]?.text ?? '';
         }
       }
 
       final Map<String, dynamic> answers = {};
       for (final field in widget.formFields) {
-        final value = field.value ?? field.selectedValue ?? field.checked;
+        dynamic value = field.value ??
+            field.selectedValue ??
+            field.checked ??
+            (field.dateValue != null
+                ? "${field.dateValue!.year}-${field.dateValue!.month.toString().padLeft(2, '0')}-${field.dateValue!.day.toString().padLeft(2, '0')}"
+                : null);
         answers[field.label] = value;
       }
 

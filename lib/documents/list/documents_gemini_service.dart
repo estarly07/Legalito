@@ -17,9 +17,9 @@ class DocumentsGeminiService {
     try {
       final content = [
         Content.text("""
-          A partir de la siguiente consulta del usuario: "$query", genera una lista de nombres de documentos legales cotidianos de Colombia, como contratos, acuerdos o formatos que una persona común podría necesitar.
+          A partir de la siguiente consulta del usuario: "$query", genera una lista de nombres de documentos legales cotidianos de Colombia, como contratos, demandas, acuerdos o formatos que una persona común podría necesitar.
           No incluyas leyes, códigos, decretos, jurisprudencia ni normas oficiales.
-          Solo títulos de documentos prácticos, como contratos civiles, laborales, arrendamientos, poderes simples, autorizaciones, etc.
+          Solo títulos de documentos prácticos, como contratos civiles, laborales, arrendamientos, poderes simples,demandas, autorizaciones, etc.
           Devuélveme únicamente los títulos, uno por línea, sin explicaciones, sin descripciones y sin ningún texto adicional.
           """),
       ];
