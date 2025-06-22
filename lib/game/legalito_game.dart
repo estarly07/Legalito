@@ -14,6 +14,7 @@ import 'package:legalito/game/disco_filter.dart';
 import 'package:legalito/game/jefe_component.dart';
 import 'package:legalito/game/models/Jefe.dart';
 import 'barrier.dart';
+import 'package:vibration/vibration.dart';
 
 const double _barrierInterval = 2.5;
 const double _velocityBarriers = 150;
@@ -183,9 +184,13 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
     desactivarDJMode();
     desactivarBackgroundSong();
     overlays.add('gameOver');
+    Future.value(hasVibrator()).then((hasVibrator) {
+      if (hasVibrator) Vibration.vibrate();
+    });
     context.read<HighScoreBloc>().add(UpdateHighScore(score));
   }
 
+  Future<bool> hasVibrator() async => await Vibration.hasVibrator();
   @override
   void onTapDown(TapDownInfo info) {
     super.onTapDown(info);

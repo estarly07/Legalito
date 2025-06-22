@@ -55,35 +55,23 @@ class CloudBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final textPainter = TextPainter(
-          text: TextSpan(
-            text: text,
-            style: const TextStyle(fontSize: 16, color: Colors.black),
-          ),
-          textDirection: TextDirection.ltr,
-          maxLines: null,
-        )..layout(maxWidth: constraints.maxWidth);
-
-        final textSize = textPainter.size;
-        final padding = 32.0;
-        final width = textSize.width + padding;
-        final height = textSize.height + padding;
-
-        return CustomPaint(
-          painter: CloudShapePainter(color: Colors.white),
-          child: Container(
-            width: width,
-            height: height,
-            alignment: Alignment.center,
-            padding: const EdgeInsets.all(16),
-            child: DefaultTextStyle(
-              style: const TextStyle(fontSize: 16, color: Colors.black),
-              child: Text(
-                text,
-                textAlign: TextAlign.center,
+        return Wrap(
+          children: [
+            CustomPaint(
+              painter: CloudShapePainter(color: Colors.white),
+              child: Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(16),
+                child: DefaultTextStyle(
+                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                  child: Text(
+                    text,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
         );
       },
     );

@@ -266,7 +266,7 @@ class _GuideScreenState extends State<GuideScreen> {
                               icon: const Icon(Icons.navigate_next),
                               label: Text(
                                 _currentStepIndex < steps.length - 1
-                                    ? 'Siguiente paso'
+                                    ? 'Siguiente solución'
                                     : 'Finalizar',
                               ),
                               style: ElevatedButton.styleFrom(
