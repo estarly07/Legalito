@@ -42,6 +42,7 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
   double targetVelocidadTuberias = _velocityBarriers;
   DiscoFilter? discoFilter = null;
   NeroFilterComponent? _neroFilter;
+  Background? _background;
 
   LegalitoGame(
       {super.children, super.world, super.camera, required this.context});
@@ -63,9 +64,9 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
   }
 
   void addBackground() {
-    final background =
+    _background =
         Background(); // Asegúrate de que esta clase esté bien definida
-    add(background);
+    add(_background!);
   }
 
   void addBird() {
@@ -158,6 +159,7 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
     removeWhere((component) => component is Barrier);
     bird.position = Vector2(100, size.y / 2);
     bird.angle = 0;
+    _background?.reset();
   }
 
   @override

@@ -70,4 +70,10 @@ class Background extends SpriteComponent with HasGameRef<LegalitoGame> {
           await gameRef.loadSprite(_backgroundAssets[_currentBackgroundIndex]);
     }
   }
+
+  void reset() {
+    _currentBackgroundIndex = 0;
+    _lastScoreThreshold = 0;
+    _updateSprite(initial: true);
+  }
 }
