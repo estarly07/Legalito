@@ -22,6 +22,10 @@ class GameAssets {
   static const String backgroundGame = 'background.png';
   static const String backgroundNight = 'background_night.png';
   static const String backgroundMorning = 'background_morning.png';
+  static const String backgroundBeach = 'background_beach.png';
+  static const String backgroundWinter = 'background_winter.png';
+  static const String backgroundAutumn = 'background_autumn.png';
+  static const String backgroundNightTwo = 'background_night_two.png';
 
   // Sonidos (opcional)
   static const String flapSound = 'fly.mp3';
