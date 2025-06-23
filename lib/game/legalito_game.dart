@@ -13,6 +13,8 @@ import 'package:legalito/game/bloc/high_score_event.dart';
 import 'package:legalito/game/disco_filter.dart';
 import 'package:legalito/game/jefe_component.dart';
 import 'package:legalito/game/models/Jefe.dart';
+import 'package:legalito/game/nero_filter.dart';
+import 'package:vibration/vibration.dart';
 import 'barrier.dart';
 
 const double _barrierInterval = 2.5;
@@ -39,6 +41,7 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
   double velocidadTuberias = _velocityBarriers;
   double targetVelocidadTuberias = _velocityBarriers;
   DiscoFilter? discoFilter = null;
+  NeroFilterComponent? _neroFilter;
 
   LegalitoGame(
       {super.children, super.world, super.camera, required this.context});
@@ -204,9 +207,13 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
     }
     desactivarBackgroundSong();
     overlays.add('gameOver');
+    Future.value(hasVibrator()).then((hasVibrator) {
+      if (hasVibrator) Vibration.vibrate();
+    });
     context.read<HighScoreBloc>().add(UpdateHighScore(score));
   }
 
+  Future<bool> hasVibrator() async => await Vibration.hasVibrator();
   @override
   void onTapDown(TapDownInfo info) {
     super.onTapDown(info);
@@ -229,6 +236,8 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
   void activarNeroMode() {
     pausarBackgroundSong();
     _audioManager.playNeroBoss();
+    _neroFilter = NeroFilterComponent();
+    add(_neroFilter!);
   }
 
   void activarEmpleyorMode() {
@@ -245,6 +254,7 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
   }
 
   void desactivarLadronNero() {
+    _neroFilter?.removeFromParent();
     _audioManager.stopNeroBoss();
     reaundarBackgroundSong();
   }
