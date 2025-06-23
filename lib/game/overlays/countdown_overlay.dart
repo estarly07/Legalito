@@ -21,17 +21,19 @@ class _CountdownOverlayState extends State<CountdownOverlay> {
   }
 
   void startCountdown() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (countdown == 1) {
-        timer.cancel();
-        widget.game.overlays.remove('countdown');
-        widget.game.activarBackgroundSong();
-        widget.game.isGameStarted = true;
-      }
-      setState(() {
-        countdown--;
+    try {
+      Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (countdown == 1) {
+          timer.cancel();
+          widget.game.overlays.remove('countdown');
+          widget.game.isGameStarted = true;
+          widget.game.activarBackgroundSong();
+        }
+        setState(() {
+          countdown--;
+        });
       });
-    });
+    } catch (e) {}
   }
 
   @override

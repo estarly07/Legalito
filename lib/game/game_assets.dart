@@ -28,5 +28,7 @@ class GameAssets {
   static const String hitSound = 'fly.mp3';
   static const String scoreSound = 'fly.mp3';
   static const String djSong = 'dj_song.mp3';
+  static const String neroSong = 'nero_song.mp3';
+  static const String empleyorSong = 'empleyor.mp3';
   static const String backgroundSong = 'background_song.mp3';
 }

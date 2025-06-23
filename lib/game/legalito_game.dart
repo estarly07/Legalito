@@ -14,11 +14,10 @@ import 'package:legalito/game/disco_filter.dart';
 import 'package:legalito/game/jefe_component.dart';
 import 'package:legalito/game/models/Jefe.dart';
 import 'barrier.dart';
-import 'package:vibration/vibration.dart';
 
 const double _barrierInterval = 2.5;
 const double _velocityBarriers = 150;
-const int _intervalBoss = 15;
+const int _intervalBoss = 5;
 const velocidadCambio =
     5.0; // puedes ajustar qué tan rápido cambia la velocidad de los tubos
 
@@ -92,10 +91,20 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
 
   void resetJefe() {
     if (jefeActivo != null) remove(jefeActivo!);
+    switch (jefeActivo?.jefe.tipo) {
+      case JefeTipo.djGrandMom:
+        desactivarDJMode();
+        break;
+      case JefeTipo.jefePrisas:
+        desactivarEmpleyor();
+        break;
+      case JefeTipo.ladronNero:
+        desactivarLadronNero();
+        break;
+      case null:
+    }
     jefeActivo = null;
     targetVelocidadTuberias = _velocityBarriers;
-    _audioManager.setBackgroundPlaybackRate(1.0);
-    desactivarDJMode();
   }
 
   void increaseScore() {
@@ -115,10 +124,10 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
             activarDJMode();
             break;
           case JefeTipo.jefePrisas:
-            _audioManager.setBackgroundPlaybackRate(1.25);
+            activarEmpleyorMode();
             break;
           case JefeTipo.ladronNero:
-            _audioManager.setBackgroundPlaybackRate(0.75);
+            activarNeroMode();
             break;
         }
         if (jefe.tipo != JefeTipo.djGrandMom) {
@@ -181,16 +190,23 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
 
   void endGame() {
     isGameOver = true;
-    desactivarDJMode();
+    switch (jefeActivo?.jefe.tipo) {
+      case JefeTipo.djGrandMom:
+        desactivarDJMode();
+        break;
+      case JefeTipo.jefePrisas:
+        desactivarEmpleyor();
+        break;
+      case JefeTipo.ladronNero:
+        desactivarLadronNero();
+        break;
+      case null:
+    }
     desactivarBackgroundSong();
     overlays.add('gameOver');
-    Future.value(hasVibrator()).then((hasVibrator) {
-      if (hasVibrator) Vibration.vibrate();
-    });
     context.read<HighScoreBloc>().add(UpdateHighScore(score));
   }
 
-  Future<bool> hasVibrator() async => await Vibration.hasVibrator();
   @override
   void onTapDown(TapDownInfo info) {
     super.onTapDown(info);
@@ -210,12 +226,32 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
     // Aquí puedes reproducir también la música del DJ
   }
 
+  void activarNeroMode() {
+    pausarBackgroundSong();
+    _audioManager.playNeroBoss();
+  }
+
+  void activarEmpleyorMode() {
+    pausarBackgroundSong();
+    _audioManager.playEmpleyorBoss();
+  }
+
   void desactivarDJMode() {
     discoFilter?.removeFromParent();
     _audioManager.stopDJ();
     moverseVerticalmente = false;
     reaundarBackgroundSong();
     // Y detener la música
+  }
+
+  void desactivarLadronNero() {
+    _audioManager.stopNeroBoss();
+    reaundarBackgroundSong();
+  }
+
+  void desactivarEmpleyor() {
+    _audioManager.stopEmpleyorBoss();
+    reaundarBackgroundSong();
   }
 
   void activarBackgroundSong() {
