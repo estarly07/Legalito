@@ -207,9 +207,9 @@ class LegalitoGame extends FlameGame with HasCollisionDetection, TapDetector {
     }
     desactivarBackgroundSong();
     overlays.add('gameOver');
-    Future.value(hasVibrator()).then((hasVibrator) {
+/*     Future.value(hasVibrator()).then((hasVibrator) {
       if (hasVibrator) Vibration.vibrate();
-    });
+    }); */
     context.read<HighScoreBloc>().add(UpdateHighScore(score));
   }
 
